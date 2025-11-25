@@ -34,7 +34,7 @@ export default function SwitchToPostOpBanner({ onSwitch }: SwitchToPostOpBannerP
             <div className="space-y-1 flex-1">
               <h3 className="text-base font-medium text-foreground">Had your surgery?</h3>
               <p className="text-sm text-muted-foreground">
-                Tap here to switch to recovery mode with step goals tailored to your healing.
+                Switch to post-op mode for recovery-focused step goals and guidance.
               </p>
             </div>
           </div>
@@ -54,16 +54,16 @@ export default function SwitchToPostOpBanner({ onSwitch }: SwitchToPostOpBannerP
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-primary" />
-              Surgery Done!
+              Switch to Post-Op Recovery
             </DialogTitle>
             <DialogDescription>
-              Congratulations – you've got through the hard part! Pop in your surgery date so we can track your recovery properly.
+              Congratulations on completing your surgery! Enter your surgery date to start tracking your recovery.
             </DialogDescription>
           </DialogHeader>
 
           <div className="py-4">
             <label className="text-sm font-medium text-foreground mb-3 block">
-              When was your surgery?
+              Date of Surgery
             </label>
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
@@ -73,7 +73,7 @@ export default function SwitchToPostOpBanner({ onSwitch }: SwitchToPostOpBannerP
                   data-testid="button-select-surgery-date"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "d MMMM yyyy") : "Pick a date"}
+                  {selectedDate ? format(selectedDate, "d MMMM yyyy") : "Select your surgery date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -105,7 +105,7 @@ export default function SwitchToPostOpBanner({ onSwitch }: SwitchToPostOpBannerP
               className="flex-1"
               data-testid="button-confirm-switch"
             >
-              Start Recovery
+              Start Recovery Tracking
             </Button>
           </div>
         </DialogContent>

@@ -2,31 +2,31 @@ import { useState } from "react";
 import ProcedureToggle from "@/components/ProcedureToggle";
 import MilestoneTimeline from "@/components/MilestoneTimeline";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, Car } from "lucide-react";
+import { CheckCircle2, Circle, Car } from "lucide-react";
 
 const hipMilestones = [
   {
     week: 'Week 1-2',
-    title: 'First Steps',
-    description: 'You\'ll be up and walking with a frame or crutches. Do your ankle pumps every hour, follow your hip precautions, and take your pain meds regularly. You\'ll have physio sessions to get you moving.',
+    title: 'Early Mobilisation',
+    description: 'Begin walking with frame or crutches. Perform ankle pumps hourly. Follow hip precautions strictly. Manage pain with prescribed medication. Attend physiotherapy.',
     completed: true,
   },
   {
     week: 'Week 3-6',
-    title: 'Getting More Independent',
-    description: 'Move from the frame to crutches or a stick. Start building up your walking – aim for 500-1,000 steps a day. Keep following your hip precautions and going to your physio appointments.',
+    title: 'Increasing Independence',
+    description: 'Progress from frame to crutches or stick. Increase walking distance to 500-1,000 steps daily. Continue hip precautions. Attend outpatient physiotherapy sessions.',
     completed: true,
   },
   {
     week: 'Week 6-12',
-    title: 'Back to Normal Activities',
-    description: 'Build up to 3,000 steps a day. Your surgeon might relax the hip precautions around now – check with them first. You can start doing things like swimming. Keep up your strengthening exercises.',
+    title: 'Return to Light Activities',
+    description: 'Progress to 3,000 steps daily. Hip precautions may be relaxed (confirm with surgeon). Resume light activities like swimming. Continue strengthening exercises.',
     completed: false,
   },
   {
     week: 'Week 12+',
     title: 'Full Recovery',
-    description: 'Most people are back to normal by now. Keep exercising to stay strong. You can gradually get back to your usual activities. Driving is usually fine once your GP says so and you can do an emergency stop comfortably.',
+    description: 'Most patients achieve full independence. Continue exercises to maintain strength. Gradually return to normal activities. Driving permitted with GP clearance and adequate hip control.',
     completed: false,
   },
 ];
@@ -34,26 +34,26 @@ const hipMilestones = [
 const kneeMilestones = [
   {
     week: 'Week 1-2',
-    title: 'First Steps',
-    description: 'You\'ll be up and walking with a frame or crutches. Do your ankle pumps every hour and your knee exercises three times a day. Aim to bend your knee to 90 degrees. Take your pain meds and manage the swelling.',
+    title: 'Early Mobilisation',
+    description: 'Begin walking with frame or crutches. Perform ankle pumps hourly and knee exercises 3 times daily. Aim for 0-90 degrees knee flexion. Manage pain and swelling.',
     completed: true,
   },
   {
     week: 'Week 3-6',
-    title: 'Getting More Independent',
-    description: 'Move from the frame to crutches or a stick. Work on bending your knee to 120 degrees. Build up your walking to 500-1,000 steps a day. Keep going to your physio appointments.',
+    title: 'Increasing Independence',
+    description: 'Progress from frame to crutches or stick. Aim for 0-120 degrees knee flexion. Increase walking to 500-1,000 steps daily. Attend outpatient physiotherapy.',
     completed: true,
   },
   {
     week: 'Week 6-12',
-    title: 'Back to Normal Activities',
-    description: 'Build up to 3,000 steps a day. Most people are walking without aids by now. You can start doing things like swimming and gentle cycling. Keep up your strengthening exercises.',
+    title: 'Return to Light Activities',
+    description: 'Progress to 3,000 steps daily. Most patients walk independently. Resume light activities like swimming and cycling. Continue strengthening exercises.',
     completed: false,
   },
   {
     week: 'Week 12+',
     title: 'Full Recovery',
-    description: 'Most people are back to normal with good movement in their knee. Keep exercising to stay strong and flexible. Driving is usually fine once your GP says so and you can do an emergency stop without hesitating.',
+    description: 'Most patients achieve full independence with good range of motion. Continue exercises to maintain strength and flexibility. Driving permitted with GP clearance when you can perform emergency stop safely.',
     completed: false,
   },
 ];
@@ -64,57 +64,57 @@ export default function Milestones() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-medium text-foreground mb-2">Your Recovery Timeline</h1>
+        <h1 className="text-2xl font-medium text-foreground mb-2">Recovery Milestones & Driving</h1>
         <p className="text-base text-muted-foreground leading-relaxed mb-6">
-          A rough guide to what to expect week by week – and when you might be able to drive again.
+          Track your recovery progress and understand when you can safely return to driving.
         </p>
         <ProcedureToggle selected={procedure} onSelect={setProcedure} />
       </div>
 
       <div>
-        <h2 className="text-lg font-medium text-foreground mb-4 px-1">What to Expect</h2>
+        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Recovery Timeline</h2>
         <MilestoneTimeline milestones={procedure === "hip" ? hipMilestones : kneeMilestones} />
       </div>
 
       <div>
-        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Getting Back Behind the Wheel</h2>
+        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Returning to Driving</h2>
         <Card className="p-6">
           <div className="flex gap-4 mb-6">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <Car className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-medium text-foreground mb-2">When Can I Drive?</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">DVLA Guidelines</h3>
               <p className="text-base text-muted-foreground leading-relaxed">
-                You can drive again when you can safely do an emergency stop and you're not taking strong painkillers. That's usually 6-8 weeks if it was your right hip or knee, or 4-6 weeks for the left side if you drive an automatic.
+                You may return to driving when you can safely perform an emergency stop and are not impaired by pain medication. This is typically 6-8 weeks for right hip/knee, 4-6 weeks for left side (automatic transmission).
               </p>
             </div>
           </div>
 
           <div className="space-y-4 pl-2">
-            <h4 className="text-base font-medium text-foreground mb-3">Before you drive, you need to be able to:</h4>
+            <h4 className="text-base font-medium text-foreground mb-3">Before Driving, You Must Be Able To:</h4>
             <div className="space-y-3">
               <div className="flex gap-3 items-start">
                 <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                <p className="text-base text-foreground">Get in and out of the car comfortably</p>
+                <p className="text-base text-foreground">Enter and exit the vehicle comfortably and safely</p>
               </div>
               <div className="flex gap-3 items-start">
                 <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                <p className="text-base text-foreground">Do an emergency stop without any hesitation</p>
+                <p className="text-base text-foreground">Perform an emergency stop without hesitation</p>
               </div>
               <div className="flex gap-3 items-start">
                 <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                <p className="text-base text-foreground">Check your blind spots and stay in full control</p>
+                <p className="text-base text-foreground">Maintain full control including checking blind spots</p>
               </div>
               <div className="flex gap-3 items-start">
                 <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                <p className="text-base text-foreground">Be off any painkillers that could affect your reactions</p>
+                <p className="text-base text-foreground">No longer taking pain medication that impairs judgment</p>
               </div>
             </div>
 
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">Important:</strong> Get the all-clear from your GP or surgeon first. Check with your insurance company too – they might want to know about your surgery. Start with short trips to get your confidence back.
+                <strong className="text-foreground">Important:</strong> You must obtain clearance from your GP or surgeon before driving. Check with your insurance company regarding cover after surgery. Start with short journeys to build confidence.
               </p>
             </div>
           </div>

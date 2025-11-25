@@ -53,17 +53,17 @@ export default function SetupModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
-            Tell Us About You
+            Your Recovery Details
           </DialogTitle>
           <DialogDescription>
-            A few quick details so we can give you the right goals and guidance.
+            Set your procedure details to receive personalised goals based on your recovery stage.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div>
             <label className="text-sm font-medium text-foreground mb-3 block">
-              Which joint are you having done?
+              Type of Replacement
             </label>
             <div className="grid grid-cols-2 gap-3">
               <Card 
@@ -107,7 +107,7 @@ export default function SetupModal({
 
           <div>
             <label className="text-sm font-medium text-foreground mb-3 block">
-              Where are you in your journey?
+              Current Stage
             </label>
             <div className="grid grid-cols-2 gap-3">
               <Card 
@@ -123,8 +123,8 @@ export default function SetupModal({
                   <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-accent/10 flex items-center justify-center">
                     <Clock className="w-5 h-5 text-accent" />
                   </div>
-                  <div className="font-medium text-foreground">Before surgery</div>
-                  <div className="text-xs text-muted-foreground">Getting ready</div>
+                  <div className="font-medium text-foreground">Pre-Op</div>
+                  <div className="text-xs text-muted-foreground">Awaiting surgery</div>
                 </div>
               </Card>
               <Card 
@@ -140,8 +140,8 @@ export default function SetupModal({
                   <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-primary/10 flex items-center justify-center">
                     <CheckCircle className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="font-medium text-foreground">After surgery</div>
-                  <div className="text-xs text-muted-foreground">Recovering</div>
+                  <div className="font-medium text-foreground">Post-Op</div>
+                  <div className="text-xs text-muted-foreground">Surgery completed</div>
                 </div>
               </Card>
             </div>
@@ -149,7 +149,7 @@ export default function SetupModal({
 
           <div>
             <label className="text-sm font-medium text-foreground mb-3 block">
-              {selectedPhase === "pre-op" ? "When's your surgery? (optional)" : "When was your surgery?"}
+              {selectedPhase === "pre-op" ? "Planned Surgery Date (optional)" : "Date of Surgery"}
             </label>
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
@@ -162,8 +162,8 @@ export default function SetupModal({
                   {selectedDate 
                     ? format(selectedDate, "d MMMM yyyy") 
                     : selectedPhase === "pre-op" 
-                      ? "Pick a date" 
-                      : "Pick a date"
+                      ? "Select planned surgery date" 
+                      : "Select your surgery date"
                   }
                 </Button>
               </PopoverTrigger>
@@ -182,7 +182,7 @@ export default function SetupModal({
             </Popover>
             {selectedPhase === "pre-op" && (
               <p className="text-xs text-muted-foreground mt-2">
-                If you know your surgery date, pop it in – it helps us tailor your preparation.
+                Adding your planned date helps us guide your prehabilitation.
               </p>
             )}
           </div>
@@ -202,7 +202,7 @@ export default function SetupModal({
             className="flex-1"
             data-testid="button-save-settings"
           >
-            Save
+            Save Settings
           </Button>
         </div>
       </DialogContent>

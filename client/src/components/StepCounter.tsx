@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Settings, TrendingUp, AlertCircle, Clock } from "lucide-react";
+import { Activity, Settings, TrendingUp, AlertCircle, Clock, Calendar } from "lucide-react";
 
 interface StepCounterProps {
   steps: number;
@@ -48,10 +48,10 @@ export default function StepCounter({
               <span className="text-sm font-medium text-foreground">
                 {isPreOp ? (
                   weeksUntilSurgery !== null && weeksUntilSurgery > 0 
-                    ? `${weeksUntilSurgery} week${weeksUntilSurgery !== 1 ? 's' : ''} to go`
-                    : "Getting ready"
+                    ? `${weeksUntilSurgery} week${weeksUntilSurgery !== 1 ? 's' : ''} until surgery`
+                    : "Prehabilitation"
                 ) : (
-                  `Week ${recoveryWeek} – ${recoveryPhase.name}`
+                  `Week ${recoveryWeek} — ${recoveryPhase.name}`
                 )}
               </span>
             </div>
@@ -94,9 +94,9 @@ export default function StepCounter({
           <div className="flex items-start gap-3 bg-destructive/10 border border-destructive/20 rounded-lg p-4 w-full">
             <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground">You've gone past today's goal</p>
+              <p className="text-sm font-medium text-foreground">You've exceeded today's goal</p>
               <p className="text-xs text-muted-foreground">
-                Time to put your feet up. Overdoing it can make swelling worse and slow things down.
+                To manage swelling, rest with your leg elevated. Overdoing it can slow recovery.
               </p>
             </div>
           </div>
@@ -106,9 +106,9 @@ export default function StepCounter({
           <div className="flex items-start gap-3 bg-accent/10 border border-accent/20 rounded-lg p-4 w-full">
             <Activity className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground">Brilliant effort!</p>
+              <p className="text-sm font-medium text-foreground">Excellent prehab effort!</p>
               <p className="text-xs text-muted-foreground">
-                You're doing great building up your fitness. Just listen to your body and rest if you need to.
+                Great job building strength. Listen to your body and rest when needed.
               </p>
             </div>
           </div>
@@ -118,11 +118,11 @@ export default function StepCounter({
           <div className="flex items-start gap-3 bg-accent/10 border border-accent/20 rounded-lg p-4 w-full">
             <AlertCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground">Nearly there!</p>
+              <p className="text-sm font-medium text-foreground">Almost at your goal</p>
               <p className="text-xs text-muted-foreground">
                 {isPreOp 
-                  ? "You're building great fitness for your surgery – well done!" 
-                  : "You're doing brilliantly. Remember to put your leg up and ice it after a walk."
+                  ? "You're building great fitness for your surgery!" 
+                  : "You're doing well! Remember to elevate and ice your leg after activity."
                 }
               </p>
             </div>
@@ -136,15 +136,15 @@ export default function StepCounter({
             className="flex items-center gap-2 text-sm text-primary hover:underline"
           >
             <Activity className="w-4 h-4" />
-            Turn on step counting
+            Enable step tracking
           </button>
         )}
         
         {permissionGranted && !isOverGoal && !isNearLimit && (
           <div className="text-center">
-            <div className="text-lg font-medium text-foreground">{percentage.toFixed(0)}% of today's goal</div>
+            <div className="text-lg font-medium text-foreground">{percentage.toFixed(0)}% of daily goal</div>
             <p className="text-sm text-muted-foreground mt-1">
-              {steps < goal ? `${(goal - steps).toLocaleString()} steps to go` : "Goal reached!"}
+              {steps < goal ? `${(goal - steps).toLocaleString()} steps to go` : "Goal achieved!"}
             </p>
           </div>
         )}
@@ -157,7 +157,7 @@ export default function StepCounter({
           data-testid="button-open-settings"
         >
           <Settings className="w-4 h-4 mr-2" />
-          {procedureType ? "Change your details" : "Set up your details"}
+          {procedureType ? "Update recovery details" : "Set your procedure details"}
         </Button>
       </div>
     </Card>

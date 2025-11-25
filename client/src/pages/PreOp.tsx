@@ -27,9 +27,9 @@ import {
 const additionalSections = [
   {
     id: 'dvt-info',
-    title: 'Preventing Blood Clots (DVT)',
+    title: 'Understanding DVT Prevention',
     badge: 'NICE',
-    content: 'Blood clots are a risk after any surgery, but there\'s lots you can do to prevent them. You\'ll be given blood-thinning medication and compression stockings. The best thing you can do is keep moving – get up and walk when you can, and do your ankle pumps every hour while you\'re awake. If you get calf pain, swelling, or any trouble breathing, tell someone straight away.',
+    content: 'Deep vein thrombosis (DVT) is a blood clot risk after surgery. Prevention includes anticoagulant medication, compression stockings, and early mobilisation. You will perform ankle pumps every hour whilst awake. Report any calf pain, swelling, or breathing difficulties immediately.',
   },
 ];
 
@@ -49,9 +49,9 @@ export default function PreOp() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-medium text-foreground mb-2">Before Your Surgery</h1>
+        <h1 className="text-2xl font-medium text-foreground mb-2">Pre-Operative Preparation</h1>
         <p className="text-base text-muted-foreground leading-relaxed mb-6">
-          Five things that make the biggest difference. Start these 4–6 weeks before surgery for the fastest, smoothest recovery.
+          Your 5 highest-impact actions. Do these 4–6 weeks before surgery to give yourself the fastest, safest recovery.
         </p>
         <ProcedureToggle selected={procedure} onSelect={setProcedure} />
       </div>
@@ -94,10 +94,10 @@ export default function PreOp() {
 
         <PreOpChecklistCard
           icon={Droplets}
-          title="Get your blood sugar sorted (if diabetic)"
-          description="Aim for HbA1c below 69 mmol/mol (8.5%). Pop in to see your GP or diabetes nurse to get your levels as good as possible before the op."
+          title="Get your blood sugar under control (if diabetic)"
+          description="Target HbA1c below 69 mmol/mol (8.5%). Book a quick GP review to optimise your levels before surgery."
           statistic="~30%"
-          statisticLabel="lower infection risk with good control"
+          statisticLabel="reduction in infection risk with improved control"
           checked={checklist.bloodSugarSorted}
           onToggle={() => toggleItem('bloodSugarSorted')}
           testId="checklist-blood-sugar"
@@ -105,8 +105,8 @@ export default function PreOp() {
 
         <PreOpChecklistCard
           icon={Dumbbell}
-          title="Build up your arms, shoulders and core"
-          description="Just 10–15 minutes a day of seated exercises makes a huge difference. Stronger upper body means crutches are a doddle, and you'll be up walking the same day as surgery."
+          title="Strengthen your arms, shoulders and core daily"
+          description="10–15 minutes of seated exercises (arm raises, resistance-band rows, heel slides). Makes crutches/walker easy and lets you walk the same day as surgery."
           statistic="1 day"
           statisticLabel="shorter hospital stay on average"
           checked={checklist.dailyExercises}
@@ -116,10 +116,10 @@ export default function PreOp() {
 
         <PreOpChecklistCard
           icon={Scale}
-          title="Shift some weight if your BMI is over 40"
-          description="Even losing a few kilos over 6 weeks helps a lot. Every half stone you lose cuts your risk of wound problems and blood clots."
+          title="Lose 5–10% of body weight if your BMI is over 40"
+          description="Even a few kilos in 6 weeks makes a big difference. Every 5 kg lost significantly reduces wound problems and clot risk."
           statistic="25–35%"
-          statisticLabel="lower risk per 5 kg lost"
+          statisticLabel="lower wound and clot risk per 5 kg lost"
           checked={checklist.weightProgress}
           onToggle={() => toggleItem('weightProgress')}
           testId="checklist-weight"
