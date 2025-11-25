@@ -35,7 +35,7 @@ const additionalSections = [
         
         <div className="space-y-5">
           <div>
-            <h4 className="font-medium text-foreground mb-2">Keep visitors with coughs, colds or infections away for the first 2 weeks</h4>
+            <h4 className="font-medium text-foreground mb-2">Keep unwell visitors away for the first 2 weeks</h4>
             <p className="text-muted-foreground">Germs can cause problems with the new joint. Ask family and friends to visit once they're fully better.</p>
           </div>
           
@@ -65,7 +65,7 @@ const additionalSections = [
           <ul className="space-y-2 text-sm text-foreground">
             <li className="flex items-start gap-3">
               <span className="text-accent mt-0.5">☑</span>
-              <span>Keeping poorly visitors away</span>
+              <span>Keeping unwell visitors away</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-accent mt-0.5">☑</span>
