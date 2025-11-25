@@ -1,13 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Settings, TrendingUp, AlertCircle } from "lucide-react";
+import { Activity, Settings, TrendingUp, AlertCircle, Clock, Calendar } from "lucide-react";
 
 interface StepCounterProps {
   steps: number;
   goal: number;
   recoveryWeek: number | null;
+  weeksUntilSurgery: number | null;
   recoveryPhase: { name: string; description: string } | null;
   procedureType: "hip" | "knee" | null;
+  rehabPhase: "pre-op" | "post-op";
   onOpenSettings: () => void;
   onRequestPermission?: () => void;
   permissionGranted?: boolean;
@@ -17,8 +19,10 @@ export default function StepCounter({
   steps, 
   goal, 
   recoveryWeek,
+  weeksUntilSurgery,
   recoveryPhase,
   procedureType,
+  rehabPhase,
   onOpenSettings,
   onRequestPermission, 
   permissionGranted = false 
@@ -27,15 +31,28 @@ export default function StepCounter({
   const isOverGoal = steps > goal;
   const isNearLimit = steps > goal * 0.9 && steps <= goal;
 
+  const isPreOp = rehabPhase === "pre-op";
+  const primaryColor = isPreOp ? "hsl(var(--accent))" : "hsl(var(--primary))";
+
   return (
     <Card className="p-6">
       <div className="flex flex-col items-center space-y-6">
-        {procedureType && recoveryWeek && recoveryPhase && (
+        {procedureType && recoveryPhase && (
           <div className="w-full text-center bg-muted rounded-lg p-4 mb-2">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-primary" />
+              {isPreOp ? (
+                <Clock className="w-4 h-4 text-accent" />
+              ) : (
+                <TrendingUp className="w-4 h-4 text-primary" />
+              )}
               <span className="text-sm font-medium text-foreground">
-                Week {recoveryWeek} — {recoveryPhase.name}
+                {isPreOp ? (
+                  weeksUntilSurgery !== null && weeksUntilSurgery > 0 
+                    ? `${weeksUntilSurgery} week${weeksUntilSurgery !== 1 ? 's' : ''} until surgery`
+                    : "Prehabilitation"
+                ) : (
+                  `Week ${recoveryWeek} — ${recoveryPhase.name}`
+                )}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">{recoveryPhase.description}</p>
@@ -57,7 +74,7 @@ export default function StepCounter({
               cy="100"
               r="85"
               fill="none"
-              stroke={isOverGoal ? "hsl(var(--destructive))" : "hsl(var(--primary))"}
+              stroke={isOverGoal && !isPreOp ? "hsl(var(--destructive))" : primaryColor}
               strokeWidth="12"
               strokeDasharray={`${2 * Math.PI * 85}`}
               strokeDashoffset={`${2 * Math.PI * 85 * (1 - Math.min(percentage, 100) / 100)}`}
@@ -66,14 +83,14 @@ export default function StepCounter({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className={`text-4xl font-bold ${isOverGoal ? 'text-destructive' : 'text-foreground'}`}>
+            <div className={`text-4xl font-bold ${isOverGoal && !isPreOp ? 'text-destructive' : 'text-foreground'}`}>
               {steps.toLocaleString()}
             </div>
             <div className="text-sm text-muted-foreground">of {goal.toLocaleString()} steps</div>
           </div>
         </div>
 
-        {isOverGoal && (
+        {isOverGoal && !isPreOp && (
           <div className="flex items-start gap-3 bg-destructive/10 border border-destructive/20 rounded-lg p-4 w-full">
             <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
@@ -85,13 +102,28 @@ export default function StepCounter({
           </div>
         )}
 
+        {isOverGoal && isPreOp && (
+          <div className="flex items-start gap-3 bg-accent/10 border border-accent/20 rounded-lg p-4 w-full">
+            <Activity className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Excellent prehab effort!</p>
+              <p className="text-xs text-muted-foreground">
+                Great job building strength. Listen to your body and rest when needed.
+              </p>
+            </div>
+          </div>
+        )}
+
         {isNearLimit && !isOverGoal && (
           <div className="flex items-start gap-3 bg-accent/10 border border-accent/20 rounded-lg p-4 w-full">
             <AlertCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-foreground">Almost at your goal</p>
               <p className="text-xs text-muted-foreground">
-                You're doing well! Remember to elevate and ice your leg after activity.
+                {isPreOp 
+                  ? "You're building great fitness for your surgery!" 
+                  : "You're doing well! Remember to elevate and ice your leg after activity."
+                }
               </p>
             </div>
           </div>

@@ -4,11 +4,21 @@ import StepCounter from "@/components/StepCounter";
 import QuickTipCard from "@/components/QuickTipCard";
 import ReminderToggleCard from "@/components/ReminderToggleCard";
 import SetupModal from "@/components/SetupModal";
+import SwitchToPostOpBanner from "@/components/SwitchToPostOpBanner";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { Droplets, ArrowUp, Activity, TrendingUp } from "lucide-react";
+import { Droplets, ArrowUp, Activity, TrendingUp, Dumbbell, Heart } from "lucide-react";
 
 export default function Home() {
-  const { settings, updateSettings, getRecoveryWeek, getStepGoal, getRecoveryPhase, isSetupComplete } = useUserSettings();
+  const { 
+    settings, 
+    updateSettings, 
+    switchToPostOp,
+    getRecoveryWeek, 
+    getWeeksUntilSurgery,
+    getStepGoal, 
+    getRecoveryPhase, 
+    isSetupComplete 
+  } = useUserSettings();
   
   const [ankleReminder, setAnkleReminder] = useState(true);
   const [elevationReminder, setElevationReminder] = useState(false);
@@ -22,15 +32,63 @@ export default function Home() {
     setPermissionGranted(true);
   };
 
-  const handleSaveSettings = (procedureType: "hip" | "knee", surgeryDate: string) => {
-    updateSettings({ procedureType, surgeryDate });
+  const handleSaveSettings = (procedureType: "hip" | "knee", surgeryDate: string | null, rehabPhase: "pre-op" | "post-op") => {
+    updateSettings({ procedureType, surgeryDate, rehabPhase });
+  };
+
+  const handleSwitchToPostOp = (surgeryDate: string) => {
+    switchToPostOp(surgeryDate);
   };
 
   const recoveryWeek = getRecoveryWeek();
+  const weeksUntilSurgery = getWeeksUntilSurgery();
   const stepGoal = getStepGoal();
   const recoveryPhase = getRecoveryPhase();
+  const isPreOp = settings.rehabPhase === "pre-op";
 
-  const getTipsForPhase = () => {
+  const getPreOpTips = () => {
+    const weeksUntil = getWeeksUntilSurgery();
+    
+    if (weeksUntil !== null && weeksUntil <= 1) {
+      return [
+        {
+          icon: Heart,
+          title: "Rest Before Surgery",
+          description: "Take it easy this week. Light walks and gentle stretching only.",
+        },
+        {
+          icon: Droplets,
+          title: "Stay Hydrated",
+          description: "Drink plenty of water to ensure you're well hydrated for surgery.",
+        },
+        {
+          icon: Activity,
+          title: "Practice Ankle Pumps",
+          description: "You'll need to do these after surgery to prevent blood clots.",
+        },
+      ];
+    }
+
+    return [
+      {
+        icon: Dumbbell,
+        title: "Strengthen Your Muscles",
+        description: "Perform your prescribed exercises daily to build strength for faster recovery.",
+      },
+      {
+        icon: TrendingUp,
+        title: "Build Cardiovascular Fitness",
+        description: "Regular walking helps prepare your body for surgery and recovery.",
+      },
+      {
+        icon: Heart,
+        title: "Optimise Your Health",
+        description: "Eat well, maintain a healthy weight, and stop smoking if applicable.",
+      },
+    ];
+  };
+
+  const getPostOpTips = () => {
     if (recoveryWeek && recoveryWeek <= 2) {
       return [
         {
@@ -88,11 +146,15 @@ export default function Home() {
     ];
   };
 
-  const tips = getTipsForPhase();
+  const tips = isPreOp ? getPreOpTips() : getPostOpTips();
 
   return (
     <div className="space-y-6">
       <WelcomeCard />
+
+      {isPreOp && isSetupComplete && (
+        <SwitchToPostOpBanner onSwitch={handleSwitchToPostOp} />
+      )}
       
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">Today's Progress</h2>
@@ -100,8 +162,10 @@ export default function Home() {
           steps={steps} 
           goal={stepGoal}
           recoveryWeek={recoveryWeek}
+          weeksUntilSurgery={weeksUntilSurgery}
           recoveryPhase={recoveryPhase}
           procedureType={settings.procedureType}
+          rehabPhase={settings.rehabPhase}
           onOpenSettings={() => setSetupOpen(true)}
           permissionGranted={permissionGranted}
           onRequestPermission={handleRequestPermission}
@@ -110,7 +174,7 @@ export default function Home() {
 
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">
-          {recoveryWeek && recoveryWeek <= 2 ? "Early Recovery Tips" : "Tips for Today"}
+          {isPreOp ? "Prehabilitation Tips" : recoveryWeek && recoveryWeek <= 2 ? "Early Recovery Tips" : "Tips for Today"}
         </h2>
         <div className="space-y-4">
           {tips.map((tip, index) => (
@@ -129,28 +193,30 @@ export default function Home() {
         <div className="space-y-4">
           <ReminderToggleCard
             icon={Activity}
-            title="Ankle Pumps"
-            description="Reminder every 2 hours to perform ankle pump exercises"
+            title={isPreOp ? "Exercise Reminder" : "Ankle Pumps"}
+            description={isPreOp ? "Daily reminder to complete your strengthening exercises" : "Reminder every 2 hours to perform ankle pump exercises"}
             enabled={ankleReminder}
             onToggle={(enabled) => {
-              console.log('Ankle pumps reminder:', enabled);
+              console.log('Exercise/ankle pumps reminder:', enabled);
               setAnkleReminder(enabled);
             }}
           />
-          <ReminderToggleCard
-            icon={ArrowUp}
-            title="Elevation Breaks"
-            description="Reminder to elevate your leg for 20 minutes, 3 times daily"
-            enabled={elevationReminder}
-            onToggle={(enabled) => {
-              console.log('Elevation reminder:', enabled);
-              setElevationReminder(enabled);
-            }}
-          />
+          {!isPreOp && (
+            <ReminderToggleCard
+              icon={ArrowUp}
+              title="Elevation Breaks"
+              description="Reminder to elevate your leg for 20 minutes, 3 times daily"
+              enabled={elevationReminder}
+              onToggle={(enabled) => {
+                console.log('Elevation reminder:', enabled);
+                setElevationReminder(enabled);
+              }}
+            />
+          )}
           <ReminderToggleCard
             icon={TrendingUp}
             title="Daily Step Goal"
-            description="Evening reminder if you haven't reached your step target"
+            description={isPreOp ? "Evening reminder to reach your prehab step target" : "Evening reminder if you haven't reached your step target"}
             enabled={stepReminder}
             onToggle={(enabled) => {
               console.log('Step goal reminder:', enabled);
@@ -165,6 +231,7 @@ export default function Home() {
         onOpenChange={setSetupOpen}
         procedureType={settings.procedureType}
         surgeryDate={settings.surgeryDate}
+        rehabPhase={settings.rehabPhase}
         onSave={handleSaveSettings}
       />
     </div>

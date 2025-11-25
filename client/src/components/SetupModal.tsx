@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Settings, Circle } from "lucide-react";
+import { CalendarIcon, Settings, Circle, Clock, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 
 interface SetupModalProps {
@@ -12,7 +12,8 @@ interface SetupModalProps {
   onOpenChange: (open: boolean) => void;
   procedureType: "hip" | "knee" | null;
   surgeryDate: string | null;
-  onSave: (procedureType: "hip" | "knee", surgeryDate: string) => void;
+  rehabPhase: "pre-op" | "post-op";
+  onSave: (procedureType: "hip" | "knee", surgeryDate: string | null, rehabPhase: "pre-op" | "post-op") => void;
 }
 
 export default function SetupModal({ 
@@ -20,33 +21,42 @@ export default function SetupModal({
   onOpenChange, 
   procedureType: initialProcedure, 
   surgeryDate: initialDate,
+  rehabPhase: initialPhase,
   onSave 
 }: SetupModalProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<"hip" | "knee" | null>(initialProcedure);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     initialDate ? new Date(initialDate) : undefined
   );
+  const [selectedPhase, setSelectedPhase] = useState<"pre-op" | "post-op">(initialPhase);
   const [calendarOpen, setCalendarOpen] = useState(false);
 
+  useEffect(() => {
+    setSelectedProcedure(initialProcedure);
+    setSelectedDate(initialDate ? new Date(initialDate) : undefined);
+    setSelectedPhase(initialPhase);
+  }, [initialProcedure, initialDate, initialPhase, open]);
+
   const handleSave = () => {
-    if (selectedProcedure && selectedDate) {
-      onSave(selectedProcedure, selectedDate.toISOString().split('T')[0]);
+    if (selectedProcedure) {
+      const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
+      onSave(selectedProcedure, dateStr, selectedPhase);
       onOpenChange(false);
     }
   };
 
-  const canSave = selectedProcedure !== null && selectedDate !== undefined;
+  const canSave = selectedProcedure !== null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
             Your Recovery Details
           </DialogTitle>
           <DialogDescription>
-            Set your procedure type and surgery date to receive personalised step goals based on your recovery stage.
+            Set your procedure details to receive personalised goals based on your recovery stage.
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +107,49 @@ export default function SetupModal({
 
           <div>
             <label className="text-sm font-medium text-foreground mb-3 block">
-              Date of Surgery
+              Current Stage
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <Card 
+                className={`p-4 cursor-pointer transition-all ${
+                  selectedPhase === "pre-op" 
+                    ? "border-primary bg-primary/5" 
+                    : "hover-elevate"
+                }`}
+                onClick={() => setSelectedPhase("pre-op")}
+                data-testid="button-select-preop"
+              >
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-accent/10 flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="font-medium text-foreground">Pre-Op</div>
+                  <div className="text-xs text-muted-foreground">Awaiting surgery</div>
+                </div>
+              </Card>
+              <Card 
+                className={`p-4 cursor-pointer transition-all ${
+                  selectedPhase === "post-op" 
+                    ? "border-primary bg-primary/5" 
+                    : "hover-elevate"
+                }`}
+                onClick={() => setSelectedPhase("post-op")}
+                data-testid="button-select-postop"
+              >
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="font-medium text-foreground">Post-Op</div>
+                  <div className="text-xs text-muted-foreground">Surgery completed</div>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground mb-3 block">
+              {selectedPhase === "pre-op" ? "Planned Surgery Date (optional)" : "Date of Surgery"}
             </label>
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
@@ -107,7 +159,12 @@ export default function SetupModal({
                   data-testid="button-select-date"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "d MMMM yyyy") : "Select your surgery date"}
+                  {selectedDate 
+                    ? format(selectedDate, "d MMMM yyyy") 
+                    : selectedPhase === "pre-op" 
+                      ? "Select planned surgery date" 
+                      : "Select your surgery date"
+                  }
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -118,11 +175,16 @@ export default function SetupModal({
                     setSelectedDate(date);
                     setCalendarOpen(false);
                   }}
-                  disabled={(date) => date > new Date()}
+                  disabled={(date) => selectedPhase === "post-op" && date > new Date()}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
+            {selectedPhase === "pre-op" && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Adding your planned date helps us guide your prehabilitation.
+              </p>
+            )}
           </div>
         </div>
 
