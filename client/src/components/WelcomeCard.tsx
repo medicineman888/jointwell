@@ -13,7 +13,7 @@ export default function WelcomeCard() {
         <div className="space-y-2">
           <h2 className="text-2xl font-medium text-foreground">Welcome to JointWell</h2>
           <p className="text-base text-foreground leading-relaxed">
-            Your evidence-based companion for hip and knee replacement recovery. We provide guidance from NICE and BOA recommendations to support your journey.
+            Your friendly guide to getting through hip or knee replacement surgery. We'll help you prepare, recover, and get back on your feet.
           </p>
         </div>
       </div>

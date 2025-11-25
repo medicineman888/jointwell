@@ -53,18 +53,18 @@ export default function Home() {
       return [
         {
           icon: Heart,
-          title: "Rest Before Surgery",
-          description: "Take it easy this week. Light walks and gentle stretching only.",
+          title: "Take it easy this week",
+          description: "Light walks and gentle stretching only – save your energy for the big day.",
         },
         {
           icon: Droplets,
-          title: "Stay Hydrated",
-          description: "Drink plenty of water to ensure you're well hydrated for surgery.",
+          title: "Drink plenty of water",
+          description: "Being well hydrated helps your body cope better with surgery.",
         },
         {
           icon: Activity,
-          title: "Practice Ankle Pumps",
-          description: "You'll need to do these after surgery to prevent blood clots.",
+          title: "Practise your ankle pumps",
+          description: "You'll be doing lots of these afterwards to keep your blood flowing – get the hang of them now.",
         },
       ];
     }
@@ -72,18 +72,18 @@ export default function Home() {
     return [
       {
         icon: Dumbbell,
-        title: "Strengthen Your Muscles",
-        description: "Perform your prescribed exercises daily to build strength for faster recovery.",
+        title: "Do your exercises daily",
+        description: "The stronger you are going in, the quicker you'll bounce back afterwards.",
       },
       {
         icon: TrendingUp,
-        title: "Build Cardiovascular Fitness",
-        description: "Regular walking helps prepare your body for surgery and recovery.",
+        title: "Keep walking",
+        description: "Regular walks now will make a real difference to how fast you recover.",
       },
       {
         icon: Heart,
-        title: "Optimise Your Health",
-        description: "Eat well, maintain a healthy weight, and stop smoking if applicable.",
+        title: "Look after yourself",
+        description: "Eat well, stay a healthy weight, and if you smoke – now's the time to stop.",
       },
     ];
   };
@@ -93,18 +93,18 @@ export default function Home() {
       return [
         {
           icon: Droplets,
-          title: "Ice Regularly",
-          description: "Apply ice wrapped in a towel for 15-20 minutes, 3-4 times daily to reduce swelling.",
+          title: "Ice it regularly",
+          description: "Wrap some ice in a towel and pop it on for 15-20 minutes, a few times a day. Really helps with swelling.",
         },
         {
           icon: ArrowUp,
-          title: "Elevate Above Heart",
-          description: "Keep your leg elevated above heart level as much as possible to minimise swelling.",
+          title: "Get that leg up",
+          description: "Keep your leg raised above your heart as much as you can – it makes a big difference to the swelling.",
         },
         {
           icon: Activity,
-          title: "Ankle Pumps Hourly",
-          description: "Perform ankle pumps every hour whilst awake to prevent blood clots.",
+          title: "Ankle pumps every hour",
+          description: "Wiggle your foot up and down regularly while you're awake. Keeps the blood moving and helps prevent clots.",
         },
       ];
     }
@@ -112,36 +112,36 @@ export default function Home() {
       return [
         {
           icon: Droplets,
-          title: "Stay Hydrated",
-          description: "Drink plenty of water to support healing and reduce swelling.",
+          title: "Keep drinking water",
+          description: "Staying hydrated helps your body heal and keeps swelling down.",
         },
         {
           icon: ArrowUp,
-          title: "Elevate After Activity",
-          description: "Rest with your leg elevated for 20 minutes after walking sessions.",
+          title: "Put your feet up after a walk",
+          description: "After you've been on your feet, rest with your leg elevated for 20 minutes or so.",
         },
         {
           icon: Activity,
-          title: "Gentle Movement",
-          description: "Continue ankle pumps and prescribed exercises 2-3 times daily.",
+          title: "Keep up your exercises",
+          description: "Do your ankle pumps and the exercises your physio gave you – they really do help.",
         },
       ];
     }
     return [
       {
         icon: Droplets,
-        title: "Stay Hydrated",
-        description: "Drink plenty of water throughout the day to support ongoing healing.",
+        title: "Stay hydrated",
+        description: "Keep drinking plenty of water – your body's still healing even if you feel better.",
       },
       {
         icon: ArrowUp,
-        title: "Monitor Swelling",
-        description: "If swelling increases after activity, reduce intensity and elevate your leg.",
+        title: "Watch for swelling",
+        description: "If your leg swells up after being active, ease off a bit and put your feet up.",
       },
       {
         icon: Activity,
-        title: "Build Gradually",
-        description: "Increase walking distance slowly. Listen to your body and rest when needed.",
+        title: "Build up gradually",
+        description: "Increase your walking bit by bit. Listen to your body – if it hurts, rest.",
       },
     ];
   };
@@ -174,7 +174,7 @@ export default function Home() {
 
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">
-          {isPreOp ? "Prehabilitation Tips" : recoveryWeek && recoveryWeek <= 2 ? "Early Recovery Tips" : "Tips for Today"}
+          {isPreOp ? "Getting Ready" : recoveryWeek && recoveryWeek <= 2 ? "Early Days" : "Tips for Today"}
         </h2>
         <div className="space-y-4">
           {tips.map((tip, index) => (
@@ -193,8 +193,8 @@ export default function Home() {
         <div className="space-y-4">
           <ReminderToggleCard
             icon={Activity}
-            title={isPreOp ? "Exercise Reminder" : "Ankle Pumps"}
-            description={isPreOp ? "Daily reminder to complete your strengthening exercises" : "Reminder every 2 hours to perform ankle pump exercises"}
+            title={isPreOp ? "Exercise reminder" : "Ankle pumps"}
+            description={isPreOp ? "A nudge to do your strengthening exercises each day" : "A reminder every couple of hours to do your ankle pumps"}
             enabled={ankleReminder}
             onToggle={(enabled) => {
               console.log('Exercise/ankle pumps reminder:', enabled);
@@ -204,8 +204,8 @@ export default function Home() {
           {!isPreOp && (
             <ReminderToggleCard
               icon={ArrowUp}
-              title="Elevation Breaks"
-              description="Reminder to elevate your leg for 20 minutes, 3 times daily"
+              title="Elevation breaks"
+              description="A prompt to put your leg up for 20 minutes, three times a day"
               enabled={elevationReminder}
               onToggle={(enabled) => {
                 console.log('Elevation reminder:', enabled);
@@ -215,8 +215,8 @@ export default function Home() {
           )}
           <ReminderToggleCard
             icon={TrendingUp}
-            title="Daily Step Goal"
-            description={isPreOp ? "Evening reminder to reach your prehab step target" : "Evening reminder if you haven't reached your step target"}
+            title="Step goal"
+            description={isPreOp ? "An evening nudge if you haven't hit your walking target" : "A gentle reminder in the evening if you're short of your step goal"}
             enabled={stepReminder}
             onToggle={(enabled) => {
               console.log('Step goal reminder:', enabled);
