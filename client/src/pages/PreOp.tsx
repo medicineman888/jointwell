@@ -131,10 +131,10 @@ export default function PreOp() {
 
         <PreOpChecklistCard
           icon={GlassWater}
-          title="Carbohydrate drinks the night before & morning of surgery"
-          description="Drink 800 ml of the special pre-op drink your hospital gives you (or an NHS-approved 12.5% maltodextrin drink) up to 2 hours before theatre."
+          title="Pre-op drinks before surgery"
+          description="Your hospital team will give you some special pre-op drinks for before surgery. Evidence shows that drinking them can get you home from hospital half a day quicker on average."
           statistic="½ day"
-          statisticLabel="faster recovery, reduces nausea"
+          statisticLabel="faster discharge from hospital"
           checked={checklist.carbDrinksReady}
           onToggle={() => toggleItem('carbDrinksReady')}
           testId="checklist-carb-drinks"
