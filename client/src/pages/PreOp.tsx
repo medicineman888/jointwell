@@ -61,13 +61,28 @@ const additionalSections = [
         </div>
         
         <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-4">Tick when you're doing it – getting these five right gives you the best chance of a smooth recovery.</p>
+          <p className="text-sm text-muted-foreground mb-4">Getting these five right gives you the best chance of a smooth recovery.</p>
           <ul className="space-y-2 text-sm text-foreground">
-            <li>☐ Keeping poorly visitors away</li>
-            <li>☐ Wound clean & dry – know the warning signs</li>
-            <li>☐ Ankle pumps every waking hour</li>
-            <li>☐ Taking blood-thinners as prescribed</li>
-            <li>☐ Little and often walks around the house</li>
+            <li className="flex items-start gap-3">
+              <span className="text-accent mt-0.5">☑</span>
+              <span>Keeping poorly visitors away</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-accent mt-0.5">☑</span>
+              <span>Wound clean & dry – know the warning signs</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-accent mt-0.5">☑</span>
+              <span>Ankle pumps every waking hour</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-accent mt-0.5">☑</span>
+              <span>Taking blood-thinners as prescribed</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-accent mt-0.5">☑</span>
+              <span>Little and often walks around the house</span>
+            </li>
           </ul>
         </div>
       </div>
