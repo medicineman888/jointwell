@@ -4,8 +4,8 @@
   "description": "Your recovery companion for hip and knee replacement surgery. Evidence-based guidance from NICE and BOA guidelines.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f8fa",
-  "theme_color": "#0288d1",
+  "background_color": "#f5f8f8",
+  "theme_color": "#2d7575",
   "orientation": "portrait",
   "icons": [
     {
