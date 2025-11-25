@@ -26,10 +26,52 @@ import {
 
 const additionalSections = [
   {
-    id: 'dvt-info',
-    title: 'Understanding DVT Prevention',
+    id: 'complications-prevention',
+    title: 'Avoiding Complications – Infection & Clot Prevention',
     badge: 'NICE',
-    content: 'Deep vein thrombosis (DVT) is a blood clot risk after surgery. Prevention includes anticoagulant medication, compression stockings, and early mobilisation. You will perform ankle pumps every hour whilst awake. Report any calf pain, swelling, or breathing difficulties immediately.',
+    content: (
+      <div className="space-y-4">
+        <p className="text-base text-foreground font-medium">Simple steps that make a big difference to staying safe after your operation</p>
+        
+        <div className="space-y-5">
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Keep visitors with coughs, colds or infections away for the first 2 weeks</h4>
+            <p className="text-muted-foreground">Germs can cause problems with the new joint. Ask family and friends to visit once they're fully better.</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Keep the wound clean and dry – hands off the dressing</h4>
+            <p className="text-muted-foreground">No baths or soaking until your nurse says it's safe (usually 2 weeks). If the wound becomes red, hot, swollen or leaky, or you feel feverish, contact your GP or the ward straight away.</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Do your ankle pump exercises every hour you're awake</h4>
+            <p className="text-muted-foreground">Point your toes up towards your nose, then down towards the floor – 10 times each hour. This keeps blood moving in your legs and greatly reduces the risk of a clot.</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Take your blood-thinning medication exactly as prescribed</h4>
+            <p className="text-muted-foreground">You'll usually be given tablets or injections for 14–28 days (sometimes longer). Don't miss a dose – it's the most effective way to prevent clots.</p>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Keep moving as much as you're able</h4>
+            <p className="text-muted-foreground">Short, frequent walks around the house (even with crutches or a frame) help blood flow and lower clot risk.</p>
+          </div>
+        </div>
+        
+        <div className="mt-6 pt-6 border-t border-border">
+          <p className="text-sm text-muted-foreground mb-4">Tick when you're doing it – getting these five right gives you the best chance of a smooth recovery.</p>
+          <ul className="space-y-2 text-sm text-foreground">
+            <li>☐ Keeping poorly visitors away</li>
+            <li>☐ Wound clean & dry – know the warning signs</li>
+            <li>☐ Ankle pumps every waking hour</li>
+            <li>☐ Taking blood-thinners as prescribed</li>
+            <li>☐ Little and often walks around the house</li>
+          </ul>
+        </div>
+      </div>
+    ),
   },
 ];
 
