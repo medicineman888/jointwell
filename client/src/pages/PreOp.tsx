@@ -55,7 +55,7 @@ export default function PreOp() {
       <div>
         <h1 className="text-2xl font-medium text-foreground mb-2">Pre-Operative Preparation</h1>
         <p className="text-base text-muted-foreground leading-relaxed mb-6">
-          Your 5 highest-impact actions. Do these 4–6 weeks before surgery to support the ERAS pathway and give yourself the fastest, safest recovery.
+          Your 5 highest-impact actions. Do these 4–6 weeks before surgery to give yourself the fastest, safest recovery.
         </p>
         <ProcedureToggle selected={procedure} onSelect={setProcedure} />
       </div>
@@ -80,7 +80,7 @@ export default function PreOp() {
         </div>
         <Progress value={progressPercentage} className="h-3" />
         <p className="text-sm text-muted-foreground mt-3">
-          Hitting 4 or 5 of these can cut your complication risk by up to 70% (UK ERAS data).
+          Completing 4 or 5 of these can reduce your risk of complications by up to 70%.
         </p>
       </Card>
 
