@@ -2,7 +2,9 @@ import { useState } from "react";
 import ProcedureToggle from "@/components/ProcedureToggle";
 import ContentAccordion from "@/components/ContentAccordion";
 import PreOpChecklistCard from "@/components/PreOpChecklistCard";
+import HomeReadyChecklistCard from "@/components/HomeReadyChecklistCard";
 import { usePreOpChecklist } from "@/hooks/usePreOpChecklist";
+import { useHomeReadyChecklist } from "@/hooks/useHomeReadyChecklist";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -13,31 +15,18 @@ import {
   Scale, 
   GlassWater,
   CheckCircle2,
-  TrendingDown
+  TrendingDown,
+  Home,
+  Armchair,
+  Hand,
+  ShowerHead,
+  UtensilsCrossed,
+  Users
 } from "lucide-react";
 
-const hipAdditionalSections = [
+const additionalSections = [
   {
-    id: 'hip-preparation',
-    title: 'Preparing Your Home',
-    content: 'Arrange furniture to create clear walking paths. Install grab rails in bathroom if possible. Move frequently used items to waist height. Consider a raised toilet seat and shower chair. Arrange help for first 2 weeks post-surgery.',
-  },
-  {
-    id: 'hip-dvt',
-    title: 'Understanding DVT Prevention',
-    badge: 'NICE',
-    content: 'Deep vein thrombosis (DVT) is a blood clot risk after surgery. Prevention includes anticoagulant medication, compression stockings, and early mobilisation. You will perform ankle pumps every hour whilst awake. Report any calf pain, swelling, or breathing difficulties immediately.',
-  },
-];
-
-const kneeAdditionalSections = [
-  {
-    id: 'knee-preparation',
-    title: 'Preparing Your Home',
-    content: 'Arrange furniture to create clear walking paths. Install grab rails in bathroom if possible. Move frequently used items to waist height. Consider a raised toilet seat. Remove trip hazards like loose rugs. Arrange help for first 2 weeks post-surgery.',
-  },
-  {
-    id: 'knee-dvt',
+    id: 'dvt-info',
     title: 'Understanding DVT Prevention',
     badge: 'NICE',
     content: 'Deep vein thrombosis (DVT) is a blood clot risk after surgery. Prevention includes anticoagulant medication, compression stockings, and early mobilisation. You will perform ankle pumps every hour whilst awake. Report any calf pain, swelling, or breathing difficulties immediately.',
@@ -47,8 +36,15 @@ const kneeAdditionalSections = [
 export default function PreOp() {
   const [procedure, setProcedure] = useState<"hip" | "knee">("hip");
   const { checklist, toggleItem, completedCount, totalCount } = usePreOpChecklist();
+  const { 
+    checklist: homeChecklist, 
+    toggleItem: toggleHomeItem, 
+    completedCount: homeCompletedCount, 
+    totalCount: homeTotalCount 
+  } = useHomeReadyChecklist();
 
   const progressPercentage = (completedCount / totalCount) * 100;
+  const homeProgressPercentage = (homeCompletedCount / homeTotalCount) * 100;
 
   return (
     <div className="space-y-6">
@@ -141,9 +137,85 @@ export default function PreOp() {
         />
       </div>
 
-      <div>
-        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Additional Preparation</h2>
-        <ContentAccordion sections={procedure === "hip" ? hipAdditionalSections : kneeAdditionalSections} />
+      <div className="pt-4">
+        <div className="flex items-center gap-3 mb-2">
+          <Home className="w-6 h-6 text-accent" />
+          <h2 className="text-xl font-medium text-foreground">Getting Your House Ready</h2>
+        </div>
+        <p className="text-base text-muted-foreground leading-relaxed mb-6">
+          Sort this before you go in – saves a load of hassle when you're on crutches. The more you get ready now, the less you'll be struggling when you get home!
+        </p>
+
+        <Card className="p-5 bg-accent/5 border-accent/20 mb-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-accent" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {homeCompletedCount} of {homeTotalCount} sorted
+                </p>
+              </div>
+            </div>
+            {homeCompletedCount === homeTotalCount && homeCompletedCount > 0 && (
+              <Badge className="bg-accent text-accent-foreground">
+                All done!
+              </Badge>
+            )}
+          </div>
+          <Progress value={homeProgressPercentage} className="h-2 mt-3" />
+        </Card>
+
+        <div className="space-y-3">
+          <HomeReadyChecklistCard
+            icon={Armchair}
+            title="Paths cleared – no trip hazards"
+            description="Clear a wide path through the living room and bedroom. Shift chairs, rugs and coffee tables out of the way so you're not tripping over stuff."
+            checked={homeChecklist.pathsCleared}
+            onToggle={() => toggleHomeItem('pathsCleared')}
+            testId="home-paths"
+          />
+
+          <HomeReadyChecklistCard
+            icon={Hand}
+            title="Everyday stuff at waist height"
+            description="Put everything you use daily (remote, phone charger, kettle, biscuits) between knee and shoulder height – no bending or reaching."
+            checked={homeChecklist.itemsAtWaistHeight}
+            onToggle={() => toggleHomeItem('itemsAtWaistHeight')}
+            testId="home-items"
+          />
+
+          <HomeReadyChecklistCard
+            icon={Hand}
+            title="Grab rails and raised toilet seat sorted"
+            description="Fit a grab rail by the toilet and in the shower if you can. Get a raised toilet seat – makes life much easier. Your hospital might lend you one, so ask."
+            checked={homeChecklist.grabRailsToiletSeat}
+            onToggle={() => toggleHomeItem('grabRailsToiletSeat')}
+            testId="home-rails"
+          />
+
+          <HomeReadyChecklistCard
+            icon={ShowerHead}
+            title="Shower chair ready"
+            description="Get a shower chair or stool – you'll be glad you did. Again, the hospital might be able to lend you one."
+            checked={homeChecklist.showerChairReady}
+            onToggle={() => toggleHomeItem('showerChairReady')}
+            testId="home-shower"
+          />
+
+          <HomeReadyChecklistCard
+            icon={UtensilsCrossed}
+            title="Freezer stocked and help lined up"
+            description="Stock the freezer with easy meals. Have plenty of loo roll, tea bags and milk within reach. Sort someone to help for the first 2 weeks – even just popping round once a day helps."
+            checked={homeChecklist.freezerStockedHelpSorted}
+            onToggle={() => toggleHomeItem('freezerStockedHelpSorted')}
+            testId="home-freezer"
+          />
+        </div>
+      </div>
+
+      <div className="pt-2">
+        <h2 className="text-lg font-medium text-foreground mb-4 px-1">More Information</h2>
+        <ContentAccordion sections={additionalSections} />
       </div>
     </div>
   );
