@@ -3,19 +3,92 @@ import WelcomeCard from "@/components/WelcomeCard";
 import StepCounter from "@/components/StepCounter";
 import QuickTipCard from "@/components/QuickTipCard";
 import ReminderToggleCard from "@/components/ReminderToggleCard";
+import SetupModal from "@/components/SetupModal";
+import { useUserSettings } from "@/hooks/useUserSettings";
 import { Droplets, ArrowUp, Activity, TrendingUp } from "lucide-react";
 
 export default function Home() {
+  const { settings, updateSettings, getRecoveryWeek, getStepGoal, getRecoveryPhase, isSetupComplete } = useUserSettings();
+  
   const [ankleReminder, setAnkleReminder] = useState(true);
   const [elevationReminder, setElevationReminder] = useState(false);
   const [stepReminder, setStepReminder] = useState(true);
   const [steps, setSteps] = useState(1847);
   const [permissionGranted, setPermissionGranted] = useState(true);
+  const [setupOpen, setSetupOpen] = useState(!isSetupComplete);
 
   const handleRequestPermission = () => {
     console.log('Step tracking permission requested');
     setPermissionGranted(true);
   };
+
+  const handleSaveSettings = (procedureType: "hip" | "knee", surgeryDate: string) => {
+    updateSettings({ procedureType, surgeryDate });
+  };
+
+  const recoveryWeek = getRecoveryWeek();
+  const stepGoal = getStepGoal();
+  const recoveryPhase = getRecoveryPhase();
+
+  const getTipsForPhase = () => {
+    if (recoveryWeek && recoveryWeek <= 2) {
+      return [
+        {
+          icon: Droplets,
+          title: "Ice Regularly",
+          description: "Apply ice wrapped in a towel for 15-20 minutes, 3-4 times daily to reduce swelling.",
+        },
+        {
+          icon: ArrowUp,
+          title: "Elevate Above Heart",
+          description: "Keep your leg elevated above heart level as much as possible to minimise swelling.",
+        },
+        {
+          icon: Activity,
+          title: "Ankle Pumps Hourly",
+          description: "Perform ankle pumps every hour whilst awake to prevent blood clots.",
+        },
+      ];
+    }
+    if (recoveryWeek && recoveryWeek <= 6) {
+      return [
+        {
+          icon: Droplets,
+          title: "Stay Hydrated",
+          description: "Drink plenty of water to support healing and reduce swelling.",
+        },
+        {
+          icon: ArrowUp,
+          title: "Elevate After Activity",
+          description: "Rest with your leg elevated for 20 minutes after walking sessions.",
+        },
+        {
+          icon: Activity,
+          title: "Gentle Movement",
+          description: "Continue ankle pumps and prescribed exercises 2-3 times daily.",
+        },
+      ];
+    }
+    return [
+      {
+        icon: Droplets,
+        title: "Stay Hydrated",
+        description: "Drink plenty of water throughout the day to support ongoing healing.",
+      },
+      {
+        icon: ArrowUp,
+        title: "Monitor Swelling",
+        description: "If swelling increases after activity, reduce intensity and elevate your leg.",
+      },
+      {
+        icon: Activity,
+        title: "Build Gradually",
+        description: "Increase walking distance slowly. Listen to your body and rest when needed.",
+      },
+    ];
+  };
+
+  const tips = getTipsForPhase();
 
   return (
     <div className="space-y-6">
@@ -25,30 +98,29 @@ export default function Home() {
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">Today's Progress</h2>
         <StepCounter 
           steps={steps} 
-          goal={3000} 
+          goal={stepGoal}
+          recoveryWeek={recoveryWeek}
+          recoveryPhase={recoveryPhase}
+          procedureType={settings.procedureType}
+          onOpenSettings={() => setSetupOpen(true)}
           permissionGranted={permissionGranted}
           onRequestPermission={handleRequestPermission}
         />
       </div>
 
       <div>
-        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Quick Tips for Today</h2>
+        <h2 className="text-lg font-medium text-foreground mb-4 px-1">
+          {recoveryWeek && recoveryWeek <= 2 ? "Early Recovery Tips" : "Tips for Today"}
+        </h2>
         <div className="space-y-4">
-          <QuickTipCard
-            icon={Droplets}
-            title="Stay Hydrated"
-            description="Drink plenty of water throughout the day to support healing and reduce swelling."
-          />
-          <QuickTipCard
-            icon={ArrowUp}
-            title="Elevate Your Leg"
-            description="Keep your leg elevated when resting to minimise swelling and promote circulation."
-          />
-          <QuickTipCard
-            icon={Activity}
-            title="Gentle Movement"
-            description="Perform ankle pumps regularly to prevent blood clots and maintain circulation."
-          />
+          {tips.map((tip, index) => (
+            <QuickTipCard
+              key={index}
+              icon={tip.icon}
+              title={tip.title}
+              description={tip.description}
+            />
+          ))}
         </div>
       </div>
 
@@ -87,6 +159,14 @@ export default function Home() {
           />
         </div>
       </div>
+
+      <SetupModal
+        open={setupOpen}
+        onOpenChange={setSetupOpen}
+        procedureType={settings.procedureType}
+        surgeryDate={settings.surgeryDate}
+        onSave={handleSaveSettings}
+      />
     </div>
   );
 }

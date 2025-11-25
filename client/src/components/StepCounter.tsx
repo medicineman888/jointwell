@@ -1,20 +1,47 @@
-import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
-import { Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Activity, Settings, TrendingUp, AlertCircle } from "lucide-react";
 
 interface StepCounterProps {
   steps: number;
   goal: number;
+  recoveryWeek: number | null;
+  recoveryPhase: { name: string; description: string } | null;
+  procedureType: "hip" | "knee" | null;
+  onOpenSettings: () => void;
   onRequestPermission?: () => void;
   permissionGranted?: boolean;
 }
 
-export default function StepCounter({ steps, goal, onRequestPermission, permissionGranted = false }: StepCounterProps) {
+export default function StepCounter({ 
+  steps, 
+  goal, 
+  recoveryWeek,
+  recoveryPhase,
+  procedureType,
+  onOpenSettings,
+  onRequestPermission, 
+  permissionGranted = false 
+}: StepCounterProps) {
   const percentage = Math.min((steps / goal) * 100, 100);
+  const isOverGoal = steps > goal;
+  const isNearLimit = steps > goal * 0.9 && steps <= goal;
 
   return (
-    <Card className="p-8">
+    <Card className="p-6">
       <div className="flex flex-col items-center space-y-6">
+        {procedureType && recoveryWeek && recoveryPhase && (
+          <div className="w-full text-center bg-muted rounded-lg p-4 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-foreground">
+                Week {recoveryWeek} — {recoveryPhase.name}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">{recoveryPhase.description}</p>
+          </div>
+        )}
+
         <div className="relative w-48 h-48 flex items-center justify-center">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 200 200">
             <circle
@@ -30,19 +57,45 @@ export default function StepCounter({ steps, goal, onRequestPermission, permissi
               cy="100"
               r="85"
               fill="none"
-              stroke="hsl(var(--primary))"
+              stroke={isOverGoal ? "hsl(var(--destructive))" : "hsl(var(--primary))"}
               strokeWidth="12"
               strokeDasharray={`${2 * Math.PI * 85}`}
-              strokeDashoffset={`${2 * Math.PI * 85 * (1 - percentage / 100)}`}
+              strokeDashoffset={`${2 * Math.PI * 85 * (1 - Math.min(percentage, 100) / 100)}`}
               strokeLinecap="round"
               className="transition-all duration-500"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold text-foreground">{steps.toLocaleString()}</div>
+            <div className={`text-4xl font-bold ${isOverGoal ? 'text-destructive' : 'text-foreground'}`}>
+              {steps.toLocaleString()}
+            </div>
             <div className="text-sm text-muted-foreground">of {goal.toLocaleString()} steps</div>
           </div>
         </div>
+
+        {isOverGoal && (
+          <div className="flex items-start gap-3 bg-destructive/10 border border-destructive/20 rounded-lg p-4 w-full">
+            <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-foreground">You've exceeded today's goal</p>
+              <p className="text-xs text-muted-foreground">
+                To manage swelling, rest with your leg elevated. Overdoing it can slow recovery.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {isNearLimit && !isOverGoal && (
+          <div className="flex items-start gap-3 bg-accent/10 border border-accent/20 rounded-lg p-4 w-full">
+            <AlertCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Almost at your goal</p>
+              <p className="text-xs text-muted-foreground">
+                You're doing well! Remember to elevate and ice your leg after activity.
+              </p>
+            </div>
+          </div>
+        )}
         
         {!permissionGranted && (
           <button 
@@ -55,7 +108,7 @@ export default function StepCounter({ steps, goal, onRequestPermission, permissi
           </button>
         )}
         
-        {permissionGranted && (
+        {permissionGranted && !isOverGoal && !isNearLimit && (
           <div className="text-center">
             <div className="text-lg font-medium text-foreground">{percentage.toFixed(0)}% of daily goal</div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -63,6 +116,17 @@ export default function StepCounter({ steps, goal, onRequestPermission, permissi
             </p>
           </div>
         )}
+
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onOpenSettings}
+          className="text-muted-foreground"
+          data-testid="button-open-settings"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          {procedureType ? "Update recovery details" : "Set your procedure details"}
+        </Button>
       </div>
     </Card>
   );
