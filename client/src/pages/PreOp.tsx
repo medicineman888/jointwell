@@ -143,7 +143,7 @@ export default function PreOp() {
           <h2 className="text-xl font-medium text-foreground">Getting Your House Ready</h2>
         </div>
         <p className="text-base text-muted-foreground leading-relaxed mb-6">
-          Sort this before you go in – saves a load of hassle when you're on crutches. The more you get ready now, the less you'll be struggling when you get home!
+          Preparing your home environment will make your recovery safer and more comfortable. Complete these arrangements before your surgery.
         </p>
 
         <Card className="p-5 bg-accent/5 border-accent/20 mb-4">
@@ -152,7 +152,7 @@ export default function PreOp() {
               <CheckCircle2 className="w-5 h-5 text-accent" />
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  {homeCompletedCount} of {homeTotalCount} sorted
+                  {homeCompletedCount} of {homeTotalCount} completed
                 </p>
               </div>
             </div>
@@ -168,8 +168,8 @@ export default function PreOp() {
         <div className="space-y-3">
           <HomeReadyChecklistCard
             icon={Armchair}
-            title="Paths cleared – no trip hazards"
-            description="Clear a wide path through the living room and bedroom. Shift chairs, rugs and coffee tables out of the way so you're not tripping over stuff."
+            title="Clear pathways and remove trip hazards"
+            description="Create clear walking routes through your home. Remove or relocate furniture, rugs, and other obstacles that could cause falls."
             checked={homeChecklist.pathsCleared}
             onToggle={() => toggleHomeItem('pathsCleared')}
             testId="home-paths"
@@ -177,8 +177,8 @@ export default function PreOp() {
 
           <HomeReadyChecklistCard
             icon={Hand}
-            title="Everyday stuff at waist height"
-            description="Put everything you use daily (remote, phone charger, kettle, biscuits) between knee and shoulder height – no bending or reaching."
+            title="Position everyday items at waist height"
+            description="Arrange frequently-used items (remote, phone charger, kettle) between knee and shoulder height to avoid bending or reaching during recovery."
             checked={homeChecklist.itemsAtWaistHeight}
             onToggle={() => toggleHomeItem('itemsAtWaistHeight')}
             testId="home-items"
@@ -186,8 +186,8 @@ export default function PreOp() {
 
           <HomeReadyChecklistCard
             icon={Hand}
-            title="Grab rails and raised toilet seat sorted"
-            description="Fit a grab rail by the toilet and in the shower if you can. Get a raised toilet seat – makes life much easier. Your hospital might lend you one, so ask."
+            title="Install grab rails and raised toilet seat"
+            description="Install grab rails beside the toilet and in the shower for safety and stability. Consider a raised toilet seat to reduce hip or knee flexion. Your hospital may loan equipment."
             checked={homeChecklist.grabRailsToiletSeat}
             onToggle={() => toggleHomeItem('grabRailsToiletSeat')}
             testId="home-rails"
@@ -195,8 +195,8 @@ export default function PreOp() {
 
           <HomeReadyChecklistCard
             icon={ShowerHead}
-            title="Shower chair ready"
-            description="Get a shower chair or stool – you'll be glad you did. Again, the hospital might be able to lend you one."
+            title="Obtain a shower chair or stool"
+            description="A shower chair allows you to bathe safely whilst managing mobility restrictions. Your hospital may be able to provide one."
             checked={homeChecklist.showerChairReady}
             onToggle={() => toggleHomeItem('showerChairReady')}
             testId="home-shower"
@@ -204,8 +204,8 @@ export default function PreOp() {
 
           <HomeReadyChecklistCard
             icon={UtensilsCrossed}
-            title="Freezer stocked and help lined up"
-            description="Stock the freezer with easy meals. Have plenty of loo roll, tea bags and milk within reach. Sort someone to help for the first 2 weeks – even just popping round once a day helps."
+            title="Stock supplies and arrange support"
+            description="Stock your freezer with ready meals and ensure adequate supplies of essentials within easy reach. Arrange for someone to provide assistance for the first 2 weeks."
             checked={homeChecklist.freezerStockedHelpSorted}
             onToggle={() => toggleHomeItem('freezerStockedHelpSorted')}
             testId="home-freezer"
