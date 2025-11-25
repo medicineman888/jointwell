@@ -1,0 +1,75 @@
+Key Differences in Pre-Operative Preparation for Hip vs. Knee Replacement
+Pre-operative preparation (prehab) for both hip and knee replacements follows similar ERAS (Enhanced Recovery After Surgery) principles in the UK, as outlined by NICE guideline NG157 and the ERAS Society consensus. These focus on optimising health to reduce complications, shorten hospital stays, and improve recovery—typically starting 4-6 weeks before surgery. Core elements like smoking cessation, diabetes control, weight management, and general education apply equally to both procedures. However, subtle differences arise due to the procedures' mechanics: hip replacements often involve precautions to prevent dislocation (e.g., leg positioning), while knee replacements emphasise quadriceps strength and swelling reduction. Evidence for tailored prehab is moderate, with benefits like 20-30% lower complication rates, but it's not always procedure-specific.
+In your Jointwell app, use a user-selected toggle (hip/knee) to personalise the Pre-Op tab—e.g., show hip-specific cards for dislocation risks and knee-focused ones for quad exercises. Below is a comparison table for quick integration, followed by app-ready content snippets.
+Prehab Differences: Hip vs. Knee Replacement
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AspectHip ReplacementKnee ReplacementEvidence & Rationale (ERAS/NICE/BOA)Exercise FocusUpper body/core strengthening (e.g., seated arm raises, resistance bands 3x/week, 10-15 reps) to support crutches/walking. Avoid hip-specific stretches that risk strain.Lower body emphasis: Quad sets, straight-leg raises, heel slides (3x/week, 10-15 reps) to build knee stability and reduce post-op swelling.NICE QS206 recommends tailored rehab advice; ERAS notes low-moderate evidence for exercise, but knee benefits quad function more (20-40% faster mobilisation).Education & PrecautionsLearn hip precautions (e.g., no crossing legs, bending >90°, or twisting) via videos/apps. Focus on balance to prevent falls.Emphasise knee ROM (range of motion) exercises and swelling management (e.g., elevation techniques). Cover brace use if applicable.ERAS consensus: Education reduces anxiety by ~4% for both, but hip-specific precautions cut dislocation risk (1-3% incidence). NICE NG157 stresses procedure-tailored info.Medical OptimisationDental check for infection risk; optimise anaemia/BMI as standard. Thromboprophylaxis education (longer post-op duration).Same as hip, but tighter diabetes control (HbA1c <69 mmol/mol) due to higher wound infection risk in knees.Shared per NICE/ERAS, but knee diabetes optimisation yields 20-30% readmission drop.Home SetupRaised toilet seat/shower chair essential; ensure bed height allows 90° hip flexion. Arrange transport (no driving post-op).Similar, but prioritise knee-friendly paths (e.g., no deep rugs); raised seat for knee flexion ease.BOA/NICE: Home mods reduce falls by 25-35%; hip needs more elevation aids.Duration & Intensity4-6 weeks, moderate intensity; evidence mixed for benefits (low-quality per NICE).Same timeline, but higher intensity lower-limb focus; may shorten LOS by 0.5-1 day more than hip.ERAS: Unified pathway, but knee prehab shows slightly better pain/function gains (low evidence).
+App Integration: Personalised Pre-Op Content
+In Jointwell, prompt users: "Hip or knee replacement?" to branch content. Use checkboxes for tracking (e.g., 0/5 completed progress bar). Here's ready-to-paste text for cards—professional, concise, matching your screenshot style.
+Hip Replacement Pre-Op Card
+Hip-Specific Preparation
+Tailored steps to protect your new hip and ease recovery
+
+Focus arm/shoulder exercises (e.g., seated raises 3x/week) to handle crutches comfortably.
+Learn hip precautions: Avoid crossing legs or bending >90°—watch the demo video.
+Raise bed/toilet height for safe sitting (hospital may loan equipment).
+Arrange non-driving transport for 6 weeks post-op.
+[ ] Arm exercises started
+[ ] Precautions reviewed
+[ ] Home heights adjusted
+[ ] Transport sorted
+Disclaimer: This supports your recovery. Consult your surgeon or GP.
+
+Knee Replacement Pre-Op Card
+Knee-Specific Preparation
+Targeted steps to strengthen your knee and reduce swelling
+
+Do quad/leg raises (e.g., heel slides 3x/week, 10-15 reps) for better stability.
+Practice gentle knee bends to maintain range—use the guided audio.
+Stock ice packs and elevation pillows for post-op swelling control.
+Ensure clear floor paths to avoid knee twists on crutches.
+[ ] Leg exercises routine
+[ ] ROM practice done
+[ ] Swelling kit ready
+[ ] Paths cleared
+Disclaimer: This supports your recovery. Consult your surgeon or GP.

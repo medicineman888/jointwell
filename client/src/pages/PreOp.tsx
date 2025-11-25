@@ -194,6 +194,114 @@ export default function PreOp() {
         />
       </div>
 
+      {procedure === 'hip' && (
+        <Card className="p-6 border-primary/20">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-foreground mb-1">Hip-Specific Preparation</h3>
+              <p className="text-sm text-muted-foreground">Tailored steps to protect your new hip and ease recovery</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Focus arm and shoulder exercises</h4>
+                <p className="text-muted-foreground text-sm">Seated raises 3 times a week to help you manage crutches comfortably and walk the same day as surgery.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Learn hip precautions</h4>
+                <p className="text-muted-foreground text-sm">Avoid crossing your legs or bending more than 90°. These restrictions protect your new hip and normally last 6–12 weeks.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Raise bed and toilet height</h4>
+                <p className="text-muted-foreground text-sm">Use a raised toilet seat and a bed wedge if needed to prevent excessive bending. Your hospital may loan equipment.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Arrange non-driving transport</h4>
+                <p className="text-muted-foreground text-sm">You won't be able to drive for at least 6 weeks. Arrange lifts or use public transport in advance.</p>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <ul className="space-y-2 text-sm text-foreground">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Arm exercises started</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Hip precautions reviewed</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Home heights adjusted</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Non-driving transport sorted</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {procedure === 'knee' && (
+        <Card className="p-6 border-primary/20">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-foreground mb-1">Knee-Specific Preparation</h3>
+              <p className="text-sm text-muted-foreground">Targeted steps to strengthen your knee and reduce swelling</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Do quad and leg-strengthening exercises</h4>
+                <p className="text-muted-foreground text-sm">Heel slides and straight-leg raises, 3 times a week (10–15 reps). This builds knee stability and speeds up your recovery.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Practice gentle knee bends</h4>
+                <p className="text-muted-foreground text-sm">Maintain your range of motion before surgery. Even small bends help you regain movement faster after the operation.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Stock ice packs and elevation pillows</h4>
+                <p className="text-muted-foreground text-sm">Post-op swelling is normal. Have ice packs and extra pillows ready for elevation at home.</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-foreground mb-2">Ensure clear floor paths to avoid knee twists</h4>
+                <p className="text-muted-foreground text-sm">Remove trip hazards and ensure clear walking routes to prevent awkward movements that could strain your healing knee.</p>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <ul className="space-y-2 text-sm text-foreground">
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Leg exercises routine started</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Knee bending practice done</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Swelling care kit ready</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-accent">☑</span>
+                  <span>Floor paths cleared for safety</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="pt-4">
         <div className="flex items-center gap-3 mb-2">
           <Home className="w-6 h-6 text-accent" />
