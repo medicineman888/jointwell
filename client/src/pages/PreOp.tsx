@@ -131,10 +131,10 @@ export default function PreOp() {
 
         <PreOpChecklistCard
           icon={GlassWater}
-          title="Pre-op drinks before surgery"
-          description="Your hospital team will give you some special pre-op drinks for before surgery. Evidence shows that drinking them can get you home from hospital half a day quicker on average."
+          title="Drink your pre-op drinks as instructed"
+          description="Your hospital team will give you special drinks to have before surgery. Drinking them as directed reduces nausea and helps you recover faster."
           statistic="½ day"
-          statisticLabel="faster discharge from hospital"
+          statisticLabel="quicker discharge from hospital"
           checked={checklist.carbDrinksReady}
           onToggle={() => toggleItem('carbDrinksReady')}
           testId="checklist-carb-drinks"
