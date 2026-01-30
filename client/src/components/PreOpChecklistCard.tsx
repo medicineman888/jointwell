@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,7 @@ interface PreOpChecklistCardProps {
   testId: string;
 }
 
-export default function PreOpChecklistCard({
+export default memo(function PreOpChecklistCard({
   icon: Icon,
   title,
   description,
@@ -25,17 +26,23 @@ export default function PreOpChecklistCard({
   testId,
 }: PreOpChecklistCardProps) {
   return (
-    <Card 
-      className={`p-6 cursor-pointer transition-all ${checked ? 'bg-primary/5 border-primary/30' : 'hover-elevate'}`}
+    <Card
+      className={`p-6 cursor-pointer transition-colors ${checked ? 'bg-primary/5 border-primary/30' : 'hover-elevate'}`}
       onClick={onToggle}
+      role="checkbox"
+      aria-checked={checked}
+      aria-label={title}
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onToggle(); } }}
       data-testid={testId}
     >
       <div className="flex gap-4">
         <div className="flex items-start pt-1">
-          <Checkbox 
-            checked={checked} 
+          <Checkbox
+            checked={checked}
             onCheckedChange={onToggle}
             className="w-6 h-6"
+            tabIndex={-1}
             data-testid={`${testId}-checkbox`}
           />
         </div>
@@ -61,4 +68,4 @@ export default function PreOpChecklistCard({
       </div>
     </Card>
   );
-}
+});

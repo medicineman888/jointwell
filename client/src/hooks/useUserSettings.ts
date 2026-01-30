@@ -33,7 +33,11 @@ export function useUserSettings() {
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    } catch {
+      // localStorage may be full or unavailable in private browsing
+    }
   }, [settings]);
 
   const updateSettings = (updates: Partial<UserSettings>) => {

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LucideIcon } from "lucide-react";
@@ -11,7 +12,7 @@ interface HomeReadyChecklistCardProps {
   testId: string;
 }
 
-export default function HomeReadyChecklistCard({
+export default memo(function HomeReadyChecklistCard({
   icon: Icon,
   title,
   description,
@@ -20,17 +21,23 @@ export default function HomeReadyChecklistCard({
   testId,
 }: HomeReadyChecklistCardProps) {
   return (
-    <Card 
-      className={`p-5 cursor-pointer transition-all ${checked ? 'bg-accent/5 border-accent/30' : 'hover-elevate'}`}
+    <Card
+      className={`p-5 cursor-pointer transition-colors ${checked ? 'bg-accent/5 border-accent/30' : 'hover-elevate'}`}
       onClick={onToggle}
+      role="checkbox"
+      aria-checked={checked}
+      aria-label={title}
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onToggle(); } }}
       data-testid={testId}
     >
       <div className="flex gap-4">
         <div className="flex items-start pt-0.5">
-          <Checkbox 
-            checked={checked} 
+          <Checkbox
+            checked={checked}
             onCheckedChange={onToggle}
             className="w-5 h-5"
+            tabIndex={-1}
             data-testid={`${testId}-checkbox`}
           />
         </div>
@@ -50,4 +57,4 @@ export default function HomeReadyChecklistCard({
       </div>
     </Card>
   );
-}
+});

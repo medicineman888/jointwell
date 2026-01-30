@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import WelcomeCard from "@/components/WelcomeCard";
 import StepCounter from "@/components/StepCounter";
 import QuickTipCard from "@/components/QuickTipCard";
@@ -9,36 +9,49 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { Droplets, ArrowUp, Activity, TrendingUp, Dumbbell, Heart } from "lucide-react";
 
 export default function Home() {
-  const { 
-    settings, 
-    updateSettings, 
+  const {
+    settings,
+    updateSettings,
     switchToPostOp,
-    getRecoveryWeek, 
+    getRecoveryWeek,
     getWeeksUntilSurgery,
-    getStepGoal, 
-    getRecoveryPhase, 
-    isSetupComplete 
+    getStepGoal,
+    getRecoveryPhase,
+    isSetupComplete
   } = useUserSettings();
-  
+
   const [ankleReminder, setAnkleReminder] = useState(true);
   const [elevationReminder, setElevationReminder] = useState(false);
   const [stepReminder, setStepReminder] = useState(true);
-  const [steps, setSteps] = useState(1847);
+  const [steps] = useState(1847);
   const [permissionGranted, setPermissionGranted] = useState(true);
   const [setupOpen, setSetupOpen] = useState(!isSetupComplete);
 
-  const handleRequestPermission = () => {
-    console.log('Step tracking permission requested');
+  const handleRequestPermission = useCallback(() => {
     setPermissionGranted(true);
-  };
+  }, []);
 
-  const handleSaveSettings = (procedureType: "hip" | "knee", surgeryDate: string | null, rehabPhase: "pre-op" | "post-op") => {
+  const handleSaveSettings = useCallback((procedureType: "hip" | "knee", surgeryDate: string | null, rehabPhase: "pre-op" | "post-op") => {
     updateSettings({ procedureType, surgeryDate, rehabPhase });
-  };
+  }, [updateSettings]);
 
-  const handleSwitchToPostOp = (surgeryDate: string) => {
+  const handleSwitchToPostOp = useCallback((surgeryDate: string) => {
     switchToPostOp(surgeryDate);
-  };
+  }, [switchToPostOp]);
+
+  const handleOpenSettings = useCallback(() => setSetupOpen(true), []);
+
+  const handleAnkleToggle = useCallback((enabled: boolean) => {
+    setAnkleReminder(enabled);
+  }, []);
+
+  const handleElevationToggle = useCallback((enabled: boolean) => {
+    setElevationReminder(enabled);
+  }, []);
+
+  const handleStepToggle = useCallback((enabled: boolean) => {
+    setStepReminder(enabled);
+  }, []);
 
   const recoveryWeek = getRecoveryWeek();
   const weeksUntilSurgery = getWeeksUntilSurgery();
@@ -46,107 +59,43 @@ export default function Home() {
   const recoveryPhase = getRecoveryPhase();
   const isPreOp = settings.rehabPhase === "pre-op";
 
-  const getPreOpTips = () => {
-    const weeksUntil = getWeeksUntilSurgery();
-    
-    if (weeksUntil !== null && weeksUntil <= 1) {
+  const tips = useMemo(() => {
+    if (isPreOp) {
+      const weeksUntil = getWeeksUntilSurgery();
+      if (weeksUntil !== null && weeksUntil <= 1) {
+        return [
+          { icon: Heart, title: "Rest Before Surgery", description: "Take it easy this week. Light walks and gentle stretching only." },
+          { icon: Droplets, title: "Stay Hydrated", description: "Drink plenty of water to ensure you're well hydrated for surgery." },
+          { icon: Activity, title: "Practice Ankle Pumps", description: "You'll need to do these after surgery to prevent blood clots." },
+        ];
+      }
       return [
-        {
-          icon: Heart,
-          title: "Rest Before Surgery",
-          description: "Take it easy this week. Light walks and gentle stretching only.",
-        },
-        {
-          icon: Droplets,
-          title: "Stay Hydrated",
-          description: "Drink plenty of water to ensure you're well hydrated for surgery.",
-        },
-        {
-          icon: Activity,
-          title: "Practice Ankle Pumps",
-          description: "You'll need to do these after surgery to prevent blood clots.",
-        },
+        { icon: Dumbbell, title: "Strengthen Your Muscles", description: "Perform your prescribed exercises daily to build strength for faster recovery." },
+        { icon: TrendingUp, title: "Build Cardiovascular Fitness", description: "Regular walking helps prepare your body for surgery and recovery." },
+        { icon: Heart, title: "Optimise Your Health", description: "Eat well, maintain a healthy weight, and stop smoking if applicable." },
       ];
     }
 
-    return [
-      {
-        icon: Dumbbell,
-        title: "Strengthen Your Muscles",
-        description: "Perform your prescribed exercises daily to build strength for faster recovery.",
-      },
-      {
-        icon: TrendingUp,
-        title: "Build Cardiovascular Fitness",
-        description: "Regular walking helps prepare your body for surgery and recovery.",
-      },
-      {
-        icon: Heart,
-        title: "Optimise Your Health",
-        description: "Eat well, maintain a healthy weight, and stop smoking if applicable.",
-      },
-    ];
-  };
-
-  const getPostOpTips = () => {
     if (recoveryWeek && recoveryWeek <= 2) {
       return [
-        {
-          icon: Droplets,
-          title: "Ice Regularly",
-          description: "Apply ice wrapped in a towel for 15-20 minutes, 3-4 times daily to reduce swelling.",
-        },
-        {
-          icon: ArrowUp,
-          title: "Elevate Above Heart",
-          description: "Keep your leg elevated above heart level as much as possible to minimise swelling.",
-        },
-        {
-          icon: Activity,
-          title: "Ankle Pumps Hourly",
-          description: "Perform ankle pumps every hour whilst awake to prevent blood clots.",
-        },
+        { icon: Droplets, title: "Ice Regularly", description: "Apply ice wrapped in a towel for 15-20 minutes, 3-4 times daily to reduce swelling." },
+        { icon: ArrowUp, title: "Elevate Above Heart", description: "Keep your leg elevated above heart level as much as possible to minimise swelling." },
+        { icon: Activity, title: "Ankle Pumps Hourly", description: "Perform ankle pumps every hour whilst awake to prevent blood clots." },
       ];
     }
     if (recoveryWeek && recoveryWeek <= 6) {
       return [
-        {
-          icon: Droplets,
-          title: "Stay Hydrated",
-          description: "Drink plenty of water to support healing and reduce swelling.",
-        },
-        {
-          icon: ArrowUp,
-          title: "Elevate After Activity",
-          description: "Rest with your leg elevated for 20 minutes after walking sessions.",
-        },
-        {
-          icon: Activity,
-          title: "Gentle Movement",
-          description: "Continue ankle pumps and prescribed exercises 2-3 times daily.",
-        },
+        { icon: Droplets, title: "Stay Hydrated", description: "Drink plenty of water to support healing and reduce swelling." },
+        { icon: ArrowUp, title: "Elevate After Activity", description: "Rest with your leg elevated for 20 minutes after walking sessions." },
+        { icon: Activity, title: "Gentle Movement", description: "Continue ankle pumps and prescribed exercises 2-3 times daily." },
       ];
     }
     return [
-      {
-        icon: Droplets,
-        title: "Stay Hydrated",
-        description: "Drink plenty of water throughout the day to support ongoing healing.",
-      },
-      {
-        icon: ArrowUp,
-        title: "Monitor Swelling",
-        description: "If swelling increases after activity, reduce intensity and elevate your leg.",
-      },
-      {
-        icon: Activity,
-        title: "Build Gradually",
-        description: "Increase walking distance slowly. Listen to your body and rest when needed.",
-      },
+      { icon: Droplets, title: "Stay Hydrated", description: "Drink plenty of water throughout the day to support ongoing healing." },
+      { icon: ArrowUp, title: "Monitor Swelling", description: "If swelling increases after activity, reduce intensity and elevate your leg." },
+      { icon: Activity, title: "Build Gradually", description: "Increase walking distance slowly. Listen to your body and rest when needed." },
     ];
-  };
-
-  const tips = isPreOp ? getPreOpTips() : getPostOpTips();
+  }, [isPreOp, recoveryWeek, getWeeksUntilSurgery]);
 
   return (
     <div className="space-y-6">
@@ -155,18 +104,18 @@ export default function Home() {
       {isPreOp && isSetupComplete && (
         <SwitchToPostOpBanner onSwitch={handleSwitchToPostOp} />
       )}
-      
+
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">Today's Progress</h2>
-        <StepCounter 
-          steps={steps} 
+        <StepCounter
+          steps={steps}
           goal={stepGoal}
           recoveryWeek={recoveryWeek}
           weeksUntilSurgery={weeksUntilSurgery}
           recoveryPhase={recoveryPhase}
           procedureType={settings.procedureType}
           rehabPhase={settings.rehabPhase}
-          onOpenSettings={() => setSetupOpen(true)}
+          onOpenSettings={handleOpenSettings}
           permissionGranted={permissionGranted}
           onRequestPermission={handleRequestPermission}
         />
@@ -177,9 +126,9 @@ export default function Home() {
           {isPreOp ? "Prehabilitation Tips" : recoveryWeek && recoveryWeek <= 2 ? "Early Recovery Tips" : "Tips for Today"}
         </h2>
         <div className="space-y-4">
-          {tips.map((tip, index) => (
+          {tips.map((tip) => (
             <QuickTipCard
-              key={index}
+              key={tip.title}
               icon={tip.icon}
               title={tip.title}
               description={tip.description}
@@ -196,10 +145,7 @@ export default function Home() {
             title={isPreOp ? "Exercise Reminder" : "Ankle Pumps"}
             description={isPreOp ? "Daily reminder to complete your strengthening exercises" : "Reminder every 2 hours to perform ankle pump exercises"}
             enabled={ankleReminder}
-            onToggle={(enabled) => {
-              console.log('Exercise/ankle pumps reminder:', enabled);
-              setAnkleReminder(enabled);
-            }}
+            onToggle={handleAnkleToggle}
           />
           {!isPreOp && (
             <ReminderToggleCard
@@ -207,10 +153,7 @@ export default function Home() {
               title="Elevation Breaks"
               description="Reminder to elevate your leg for 20 minutes, 3 times daily"
               enabled={elevationReminder}
-              onToggle={(enabled) => {
-                console.log('Elevation reminder:', enabled);
-                setElevationReminder(enabled);
-              }}
+              onToggle={handleElevationToggle}
             />
           )}
           <ReminderToggleCard
@@ -218,10 +161,7 @@ export default function Home() {
             title="Daily Step Goal"
             description={isPreOp ? "Evening reminder to reach your prehab step target" : "Evening reminder if you haven't reached your step target"}
             enabled={stepReminder}
-            onToggle={(enabled) => {
-              console.log('Step goal reminder:', enabled);
-              setStepReminder(enabled);
-            }}
+            onToggle={handleStepToggle}
           />
         </div>
       </div>

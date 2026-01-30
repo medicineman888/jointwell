@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 
@@ -7,7 +8,7 @@ interface QuickTipCardProps {
   description: string;
 }
 
-export default function QuickTipCard({ icon: Icon, title, description }: QuickTipCardProps) {
+export default memo(function QuickTipCard({ icon: Icon, title, description }: QuickTipCardProps) {
   return (
     <Card className="p-6 hover-elevate cursor-pointer" data-testid={`card-tip-${title.toLowerCase().replace(/\s+/g, '-')}`}>
       <div className="flex items-start gap-4">
@@ -21,4 +22,4 @@ export default function QuickTipCard({ icon: Icon, title, description }: QuickTi
       </div>
     </Card>
   );
-}
+});

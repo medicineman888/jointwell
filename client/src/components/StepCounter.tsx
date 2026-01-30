@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Settings, TrendingUp, AlertCircle, Clock, Calendar } from "lucide-react";
+import { Activity, Settings, TrendingUp, AlertCircle, Clock } from "lucide-react";
 
 interface StepCounterProps {
   steps: number;
@@ -79,7 +79,7 @@ export default function StepCounter({
               strokeDasharray={`${2 * Math.PI * 85}`}
               strokeDashoffset={`${2 * Math.PI * 85 * (1 - Math.min(percentage, 100) / 100)}`}
               strokeLinecap="round"
-              className="transition-all duration-500"
+              className="transition-[stroke-dashoffset,stroke] duration-500 ease-out"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">

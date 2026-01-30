@@ -33,7 +33,11 @@ export function usePreOpChecklist() {
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(checklist));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checklist));
+    } catch {
+      // localStorage may be full or unavailable
+    }
   }, [checklist]);
 
   const toggleItem = (key: keyof PreOpChecklistState) => {

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { LucideIcon } from "lucide-react";
@@ -10,12 +11,12 @@ interface ReminderToggleCardProps {
   onToggle: (enabled: boolean) => void;
 }
 
-export default function ReminderToggleCard({ 
-  icon: Icon, 
-  title, 
-  description, 
-  enabled, 
-  onToggle 
+export default memo(function ReminderToggleCard({
+  icon: Icon,
+  title,
+  description,
+  enabled,
+  onToggle
 }: ReminderToggleCardProps) {
   return (
     <Card className="p-6">
@@ -29,12 +30,13 @@ export default function ReminderToggleCard({
             <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
           </div>
         </div>
-        <Switch 
-          checked={enabled} 
+        <Switch
+          checked={enabled}
           onCheckedChange={onToggle}
+          aria-label={`${enabled ? 'Disable' : 'Enable'} ${title}`}
           data-testid={`toggle-reminder-${title.toLowerCase().replace(/\s+/g, '-')}`}
         />
       </div>
     </Card>
   );
-}
+});

@@ -35,7 +35,7 @@ export default function SetupModal({
     setSelectedProcedure(initialProcedure);
     setSelectedDate(initialDate ? new Date(initialDate) : undefined);
     setSelectedPhase(initialPhase);
-  }, [initialProcedure, initialDate, initialPhase, open]);
+  }, [initialProcedure, initialDate, initialPhase]);
 
   const handleSave = () => {
     if (selectedProcedure) {
@@ -65,13 +65,17 @@ export default function SetupModal({
             <label className="text-sm font-medium text-foreground mb-3 block">
               Type of Replacement
             </label>
-            <div className="grid grid-cols-2 gap-3">
-              <Card 
-                className={`p-4 cursor-pointer transition-all ${
-                  selectedProcedure === "hip" 
-                    ? "border-primary bg-primary/5" 
+            <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Type of replacement">
+              <Card
+                className={`p-4 cursor-pointer transition-colors ${
+                  selectedProcedure === "hip"
+                    ? "border-primary bg-primary/5"
                     : "hover-elevate"
                 }`}
+                role="radio"
+                aria-checked={selectedProcedure === "hip"}
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedProcedure("hip"); } }}
                 onClick={() => setSelectedProcedure("hip")}
                 data-testid="button-select-hip-setup"
               >
@@ -83,12 +87,16 @@ export default function SetupModal({
                   <div className="text-xs text-muted-foreground">Replacement</div>
                 </div>
               </Card>
-              <Card 
-                className={`p-4 cursor-pointer transition-all ${
-                  selectedProcedure === "knee" 
-                    ? "border-primary bg-primary/5" 
+              <Card
+                className={`p-4 cursor-pointer transition-colors ${
+                  selectedProcedure === "knee"
+                    ? "border-primary bg-primary/5"
                     : "hover-elevate"
                 }`}
+                role="radio"
+                aria-checked={selectedProcedure === "knee"}
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedProcedure("knee"); } }}
                 onClick={() => setSelectedProcedure("knee")}
                 data-testid="button-select-knee-setup"
               >
@@ -109,13 +117,17 @@ export default function SetupModal({
             <label className="text-sm font-medium text-foreground mb-3 block">
               Current Stage
             </label>
-            <div className="grid grid-cols-2 gap-3">
-              <Card 
-                className={`p-4 cursor-pointer transition-all ${
-                  selectedPhase === "pre-op" 
-                    ? "border-primary bg-primary/5" 
+            <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Current stage">
+              <Card
+                className={`p-4 cursor-pointer transition-colors ${
+                  selectedPhase === "pre-op"
+                    ? "border-primary bg-primary/5"
                     : "hover-elevate"
                 }`}
+                role="radio"
+                aria-checked={selectedPhase === "pre-op"}
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedPhase("pre-op"); } }}
                 onClick={() => setSelectedPhase("pre-op")}
                 data-testid="button-select-preop"
               >
@@ -127,12 +139,16 @@ export default function SetupModal({
                   <div className="text-xs text-muted-foreground">Awaiting surgery</div>
                 </div>
               </Card>
-              <Card 
-                className={`p-4 cursor-pointer transition-all ${
-                  selectedPhase === "post-op" 
-                    ? "border-primary bg-primary/5" 
+              <Card
+                className={`p-4 cursor-pointer transition-colors ${
+                  selectedPhase === "post-op"
+                    ? "border-primary bg-primary/5"
                     : "hover-elevate"
                 }`}
+                role="radio"
+                aria-checked={selectedPhase === "post-op"}
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedPhase("post-op"); } }}
                 onClick={() => setSelectedPhase("post-op")}
                 data-testid="button-select-postop"
               >

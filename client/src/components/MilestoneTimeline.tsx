@@ -16,7 +16,7 @@ export default function MilestoneTimeline({ milestones }: MilestoneTimelineProps
   return (
     <div className="space-y-4">
       {milestones.map((milestone, index) => (
-        <Card key={index} className="p-6" data-testid={`milestone-${index}`}>
+        <Card key={milestone.week} className="p-6" data-testid={`milestone-${index}`}>
           <div className="flex gap-4">
             <div className="flex flex-col items-center">
               {milestone.completed ? (
