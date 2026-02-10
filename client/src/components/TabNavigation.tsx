@@ -6,10 +6,10 @@ interface TabNavigationProps {
 }
 
 const tabs = [
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'pre-op', label: 'Pre-Op', icon: FileText },
-  { id: 'post-op', label: 'Post-Op', icon: AlertTriangle },
-  { id: 'milestones', label: 'Milestones', icon: TrendingUp },
+  { id: 'home', label: 'Today', icon: Home },
+  { id: 'pre-op', label: 'Optimize', icon: FileText },
+  { id: 'post-op', label: 'Recover', icon: AlertTriangle },
+  { id: 'milestones', label: 'Roadmap', icon: TrendingUp },
 ];
 
 export default function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {

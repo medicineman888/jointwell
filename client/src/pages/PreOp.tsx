@@ -1,98 +1,36 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import ProcedureToggle from "@/components/ProcedureToggle";
-import ContentAccordion from "@/components/ContentAccordion";
-import PreOpChecklistCard from "@/components/PreOpChecklistCard";
+import OptimizationProfileCard from "@/components/OptimizationProfileCard";
+import ImpactInterventionCard from "@/components/ImpactInterventionCard";
 import HomeReadyChecklistCard from "@/components/HomeReadyChecklistCard";
-import { usePreOpChecklist } from "@/hooks/usePreOpChecklist";
 import { useHomeReadyChecklist } from "@/hooks/useHomeReadyChecklist";
+import { useOptimizationProfile } from "@/hooks/useOptimizationProfile";
+import { useInterventionProgress } from "@/hooks/useInterventionProgress";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import {
+  getPersonalizedInterventions,
+  getEvidenceForInterventions,
+  procedureMetadata,
+} from "@/data/clinicalProgram";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Cigarette, 
-  Droplets, 
-  Dumbbell, 
-  Scale, 
-  GlassWater,
+  BookOpenCheck,
+  CircleAlert,
   CheckCircle2,
-  TrendingDown,
   Home,
   Armchair,
   Hand,
   ShowerHead,
   UtensilsCrossed,
-  Users
+  ListChecks,
 } from "lucide-react";
 
-const additionalSections = [
-  {
-    id: 'complications-prevention',
-    title: 'Avoiding Complications – Infection & Clot Prevention',
-    badge: 'NICE',
-    content: (
-      <div className="space-y-4">
-        <p className="text-base text-foreground font-medium">Simple steps that make a big difference to staying safe after your operation</p>
-        
-        <div className="space-y-5">
-          <div>
-            <h4 className="font-medium text-foreground mb-2">Keep unwell visitors away for the first 2 weeks</h4>
-            <p className="text-muted-foreground">Germs can cause problems with the new joint. Ask family and friends to visit once they're fully better.</p>
-          </div>
-          
-          <div>
-            <h4 className="font-medium text-foreground mb-2">Keep the wound clean and dry – hands off the dressing</h4>
-            <p className="text-muted-foreground">No baths or soaking until your nurse says it's safe (usually 2 weeks). If the wound becomes red, hot, swollen or leaky, or you feel feverish, contact your GP or the ward straight away.</p>
-          </div>
-          
-          <div>
-            <h4 className="font-medium text-foreground mb-2">Do your ankle pump exercises every hour you're awake</h4>
-            <p className="text-muted-foreground">Point your toes up towards your nose, then down towards the floor – 10 times each hour. This keeps blood moving in your legs and greatly reduces the risk of a clot.</p>
-          </div>
-          
-          <div>
-            <h4 className="font-medium text-foreground mb-2">Take your blood-thinning medication exactly as prescribed</h4>
-            <p className="text-muted-foreground">You'll usually be given tablets or injections for 14–28 days (sometimes longer). Don't miss a dose – it's the most effective way to prevent clots.</p>
-          </div>
-          
-          <div>
-            <h4 className="font-medium text-foreground mb-2">Keep moving as much as you're able</h4>
-            <p className="text-muted-foreground">Short, frequent walks around the house (even with crutches or a frame) help blood flow and lower clot risk.</p>
-          </div>
-        </div>
-        
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-4">Getting these five right gives you the best chance of a smooth recovery.</p>
-          <ul className="space-y-2 text-sm text-foreground">
-            <li className="flex items-start gap-3">
-              <span className="text-accent mt-0.5">☑</span>
-              <span>Keeping unwell visitors away</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-accent mt-0.5">☑</span>
-              <span>Wound clean & dry – know the warning signs</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-accent mt-0.5">☑</span>
-              <span>Ankle pumps every waking hour</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-accent mt-0.5">☑</span>
-              <span>Taking blood-thinners as prescribed</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-accent mt-0.5">☑</span>
-              <span>Little and often walks around the house</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-];
-
 export default function PreOp() {
-  const [procedure, setProcedure] = useState<"hip" | "knee">("hip");
-  const { checklist, toggleItem, completedCount, totalCount } = usePreOpChecklist();
+  const { settings, updateSettings, getWeeksUntilSurgery } = useUserSettings();
+  const { profile, updateProfile, tags, completionPercentage } = useOptimizationProfile();
+  const { progress, markIntervention, getCompletedCount } = useInterventionProgress();
   const { 
     checklist: homeChecklist, 
     toggleItem: toggleHomeItem, 
@@ -100,207 +38,101 @@ export default function PreOp() {
     totalCount: homeTotalCount 
   } = useHomeReadyChecklist();
 
-  const progressPercentage = (completedCount / totalCount) * 100;
+  const selectedProcedure = settings.procedureType ?? "hip";
+  const weeksUntilSurgery = getWeeksUntilSurgery();
+
+  const interventions = getPersonalizedInterventions({
+    procedure: selectedProcedure,
+    phase: "pre-op",
+    profileTags: tags,
+  });
+  const interventionIds = interventions.map((intervention) => intervention.id);
+  const completedCount = getCompletedCount(interventionIds);
+  const totalCount = interventions.length;
+  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+  const evidence = getEvidenceForInterventions(interventions);
+  const evidenceMap = useMemo(() => {
+    return Object.fromEntries(evidence.map((item) => [item.id, item]));
+  }, [evidence]);
+
   const homeProgressPercentage = (homeCompletedCount / homeTotalCount) * 100;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-medium text-foreground mb-2">Pre-Operative Preparation</h1>
+        <h1 className="text-2xl font-medium text-foreground mb-2">Pre-Operative Optimization Plan</h1>
         <p className="text-base text-muted-foreground leading-relaxed mb-6">
-          Your 5 highest-impact actions. Do these 4–6 weeks before surgery to give yourself the fastest, safest recovery.
+          High-impact interventions personalized to your profile and procedure. Start these actions while on the waiting list.
         </p>
-        <ProcedureToggle selected={procedure} onSelect={setProcedure} />
+        <ProcedureToggle selected={selectedProcedure} onSelect={(procedure) => updateSettings({ procedureType: procedure })} />
       </div>
+
+      <Card className="p-5 bg-muted/40">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-foreground">{procedureMetadata[selectedProcedure].title}</p>
+            <p className="text-sm text-muted-foreground">
+              Focus risks: {procedureMetadata[selectedProcedure].keyRisks.join(", ")}.
+            </p>
+          </div>
+          {weeksUntilSurgery !== null && (
+            <Badge variant="secondary">{weeksUntilSurgery} week{weeksUntilSurgery === 1 ? "" : "s"} to surgery</Badge>
+          )}
+        </div>
+        <div className="mt-4 space-y-2">
+          {procedureMetadata[selectedProcedure].specialFocus.map((tip) => (
+            <div key={tip} className="flex items-start gap-2 text-sm text-foreground">
+              <ListChecks className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+              <span>{tip}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <OptimizationProfileCard
+        profile={profile}
+        completionPercentage={completionPercentage}
+        onProfileChange={updateProfile}
+      />
 
       <Card className="p-6 bg-primary/5 border-primary/20">
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-6 h-6 text-primary" />
             <div>
-              <h3 className="text-lg font-medium text-foreground">Your Progress</h3>
+              <h3 className="text-lg font-medium text-foreground">Optimization Progress</h3>
               <p className="text-sm text-muted-foreground">
                 {completedCount} of {totalCount} actions started
               </p>
             </div>
           </div>
-          {completedCount >= 4 && (
+          {completedCount >= 3 && (
             <Badge className="bg-accent text-accent-foreground">
-              <TrendingDown className="w-3 h-3 mr-1" />
-              Up to 70% lower risk
+              <BookOpenCheck className="w-3 h-3 mr-1" />
+              Evidence-informed
             </Badge>
           )}
         </div>
         <Progress value={progressPercentage} className="h-3" />
         <p className="text-sm text-muted-foreground mt-3">
-          Completing 4 or 5 of these can reduce your risk of complications by up to 70%.
+          Start with the top-ranked cards first; these are prioritized from your current risk profile and phase of care.
         </p>
       </Card>
 
       <div className="space-y-4">
-        <PreOpChecklistCard
-          icon={Cigarette}
-          title="Stop smoking now (aim for at least 4 weeks)"
-          description="Ask your GP or pharmacist about free NHS stop-smoking support. The earlier you stop, the better your body can heal."
-          statistic="50%"
-          statisticLabel="lower risk of infection and lung complications"
-          checked={checklist.stoppedSmoking}
-          onToggle={() => toggleItem('stoppedSmoking')}
-          testId="checklist-smoking"
-        />
-
-        <PreOpChecklistCard
-          icon={Droplets}
-          title="Get your blood sugar under control (if diabetic)"
-          description="Target HbA1c below 69 mmol/mol (8.5%). Book a quick GP review to optimise your levels before surgery."
-          statistic="~30%"
-          statisticLabel="reduction in infection risk with improved control"
-          checked={checklist.bloodSugarSorted}
-          onToggle={() => toggleItem('bloodSugarSorted')}
-          testId="checklist-blood-sugar"
-        />
-
-        <PreOpChecklistCard
-          icon={Dumbbell}
-          title="Strengthen your arms, shoulders and core daily"
-          description="10–15 minutes of seated exercises (arm raises, resistance-band rows, heel slides). Makes crutches/walker easy and lets you walk the same day as surgery."
-          statistic="1 day"
-          statisticLabel="shorter hospital stay on average"
-          checked={checklist.dailyExercises}
-          onToggle={() => toggleItem('dailyExercises')}
-          testId="checklist-exercises"
-        />
-
-        <PreOpChecklistCard
-          icon={Scale}
-          title="Lose 5–10% of body weight if your BMI is over 40"
-          description="Even a few kilos in 6 weeks makes a big difference. Every 5 kg lost significantly reduces wound problems and clot risk."
-          statistic="25–35%"
-          statisticLabel="lower wound and clot risk per 5 kg lost"
-          checked={checklist.weightProgress}
-          onToggle={() => toggleItem('weightProgress')}
-          testId="checklist-weight"
-        />
-
-        <PreOpChecklistCard
-          icon={GlassWater}
-          title="Drink your pre-op drinks as instructed"
-          description="Your hospital team will give you special drinks to have before surgery. Drinking them as directed reduces nausea and helps you recover faster."
-          statistic="½ day"
-          statisticLabel="quicker discharge from hospital"
-          checked={checklist.carbDrinksReady}
-          onToggle={() => toggleItem('carbDrinksReady')}
-          testId="checklist-carb-drinks"
-        />
+        {interventions.map((intervention) => (
+          <ImpactInterventionCard
+            key={intervention.id}
+            intervention={intervention}
+            completed={Boolean(progress[intervention.id])}
+            evidence={intervention.evidenceIds
+              .map((evidenceId) => evidenceMap[evidenceId])
+              .filter((item): item is (typeof evidence)[number] => item !== undefined)}
+            onToggle={(nextValue) => markIntervention(intervention.id, nextValue)}
+          />
+        ))}
       </div>
-
-      {procedure === 'hip' && (
-        <Card className="p-6 border-primary/20">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium text-foreground mb-1">Hip-Specific Preparation</h3>
-              <p className="text-sm text-muted-foreground">Tailored steps to protect your new hip and ease recovery</p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Focus arm and shoulder exercises</h4>
-                <p className="text-muted-foreground text-sm">Seated raises 3 times a week to help you manage crutches comfortably and walk the same day as surgery.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Learn hip precautions</h4>
-                <p className="text-muted-foreground text-sm">Avoid crossing your legs or bending more than 90°. These restrictions protect your new hip and normally last 6–12 weeks.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Raise bed and toilet height</h4>
-                <p className="text-muted-foreground text-sm">Use a raised toilet seat and a bed wedge if needed to prevent excessive bending. Your hospital may loan equipment.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Arrange non-driving transport</h4>
-                <p className="text-muted-foreground text-sm">You won't be able to drive for at least 6 weeks. Arrange lifts or use public transport in advance.</p>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-6 border-t border-border">
-              <ul className="space-y-2 text-sm text-foreground">
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Arm exercises started</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Hip precautions reviewed</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Home heights adjusted</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Non-driving transport sorted</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {procedure === 'knee' && (
-        <Card className="p-6 border-primary/20">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium text-foreground mb-1">Knee-Specific Preparation</h3>
-              <p className="text-sm text-muted-foreground">Targeted steps to strengthen your knee and reduce swelling</p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Do quad and leg-strengthening exercises</h4>
-                <p className="text-muted-foreground text-sm">Heel slides and straight-leg raises, 3 times a week (10–15 reps). This builds knee stability and speeds up your recovery.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Practice gentle knee bends</h4>
-                <p className="text-muted-foreground text-sm">Maintain your range of motion before surgery. Even small bends help you regain movement faster after the operation.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Stock ice packs and elevation pillows</h4>
-                <p className="text-muted-foreground text-sm">Post-op swelling is normal. Have ice packs and extra pillows ready for elevation at home.</p>
-              </div>
-
-              <div>
-                <h4 className="font-medium text-foreground mb-2">Ensure clear floor paths to avoid knee twists</h4>
-                <p className="text-muted-foreground text-sm">Remove trip hazards and ensure clear walking routes to prevent awkward movements that could strain your healing knee.</p>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-6 border-t border-border">
-              <ul className="space-y-2 text-sm text-foreground">
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Leg exercises routine started</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Knee bending practice done</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Swelling care kit ready</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-accent">☑</span>
-                  <span>Floor paths cleared for safety</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </Card>
-      )}
 
       <div className="pt-4">
         <div className="flex items-center gap-3 mb-2">
@@ -378,10 +210,33 @@ export default function PreOp() {
         </div>
       </div>
 
-      <div className="pt-2">
-        <h2 className="text-lg font-medium text-foreground mb-4 px-1">More Information</h2>
-        <ContentAccordion sections={additionalSections} />
-      </div>
+      <Card className="p-6 border-primary/20">
+        <div className="flex items-start gap-3 mb-4">
+          <CircleAlert className="w-5 h-5 text-primary mt-0.5" />
+          <div>
+            <h3 className="text-lg font-medium text-foreground">Evidence Library</h3>
+            <p className="text-sm text-muted-foreground">
+              Studies used to prioritize recommendations in this app. Discuss local protocol differences with your surgical team.
+            </p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {evidence.map((item) => (
+            <div key={item.id} className="rounded-lg border border-border p-4 bg-muted/40">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <Badge variant="secondary">{item.shortLabel}</Badge>
+                <Badge variant="outline">{item.quality}</Badge>
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">{item.title}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {item.journal} ({item.year})
+                {item.pmid ? ` • PMID ${item.pmid}` : ""}
+                {item.doi ? ` • DOI ${item.doi}` : ""}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }

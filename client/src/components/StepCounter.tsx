@@ -1,6 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Settings, TrendingUp, AlertCircle, Clock, Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Activity, Settings, TrendingUp, AlertCircle, Clock } from "lucide-react";
+import { useState } from "react";
+import type { ProcedureType, RehabPhase } from "@/types/clinical";
 
 interface StepCounterProps {
   steps: number;
@@ -8,11 +11,11 @@ interface StepCounterProps {
   recoveryWeek: number | null;
   weeksUntilSurgery: number | null;
   recoveryPhase: { name: string; description: string } | null;
-  procedureType: "hip" | "knee" | null;
-  rehabPhase: "pre-op" | "post-op";
+  procedureType: ProcedureType | null;
+  rehabPhase: RehabPhase;
   onOpenSettings: () => void;
-  onRequestPermission?: () => void;
-  permissionGranted?: boolean;
+  onSetSteps: (steps: number) => void;
+  onAddSteps: (delta: number) => void;
 }
 
 export default function StepCounter({ 
@@ -24,15 +27,25 @@ export default function StepCounter({
   procedureType,
   rehabPhase,
   onOpenSettings,
-  onRequestPermission, 
-  permissionGranted = false 
+  onSetSteps,
+  onAddSteps,
 }: StepCounterProps) {
+  const [manualValue, setManualValue] = useState("");
   const percentage = Math.min((steps / goal) * 100, 100);
   const isOverGoal = steps > goal;
   const isNearLimit = steps > goal * 0.9 && steps <= goal;
 
   const isPreOp = rehabPhase === "pre-op";
   const primaryColor = isPreOp ? "hsl(var(--accent))" : "hsl(var(--primary))";
+
+  const handleSetSteps = () => {
+    const parsed = Number(manualValue);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      return;
+    }
+    onSetSteps(parsed);
+    setManualValue("");
+  };
 
   return (
     <Card className="p-6">
@@ -129,18 +142,7 @@ export default function StepCounter({
           </div>
         )}
         
-        {!permissionGranted && (
-          <button 
-            onClick={onRequestPermission}
-            data-testid="button-request-step-tracking"
-            className="flex items-center gap-2 text-sm text-primary hover:underline"
-          >
-            <Activity className="w-4 h-4" />
-            Enable step tracking
-          </button>
-        )}
-        
-        {permissionGranted && !isOverGoal && !isNearLimit && (
+        {!isOverGoal && !isNearLimit && (
           <div className="text-center">
             <div className="text-lg font-medium text-foreground">{percentage.toFixed(0)}% of daily goal</div>
             <p className="text-sm text-muted-foreground mt-1">
@@ -148,6 +150,35 @@ export default function StepCounter({
             </p>
           </div>
         )}
+
+        <div className="w-full space-y-3 border-t border-border pt-4">
+          <p className="text-sm font-medium text-foreground">Update today's steps</p>
+          <div className="grid grid-cols-3 gap-2">
+            <Button variant="outline" onClick={() => onAddSteps(250)} data-testid="button-add-250-steps">
+              +250
+            </Button>
+            <Button variant="outline" onClick={() => onAddSteps(500)} data-testid="button-add-500-steps">
+              +500
+            </Button>
+            <Button variant="outline" onClick={() => onAddSteps(1000)} data-testid="button-add-1000-steps">
+              +1,000
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              placeholder="Set exact steps"
+              value={manualValue}
+              onChange={(event) => setManualValue(event.target.value)}
+              data-testid="input-set-steps"
+            />
+            <Button onClick={handleSetSteps} data-testid="button-set-steps">
+              Set
+            </Button>
+          </div>
+        </div>
 
         <Button 
           variant="ghost" 

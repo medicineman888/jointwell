@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import type { ProcedureType, RehabPhase } from "@/types/clinical";
 
 export interface UserSettings {
-  procedureType: "hip" | "knee" | null;
+  procedureType: ProcedureType | null;
   surgeryDate: string | null;
-  rehabPhase: "pre-op" | "post-op";
+  rehabPhase: RehabPhase;
 }
 
 const STORAGE_KEY = "jointwell-user-settings";

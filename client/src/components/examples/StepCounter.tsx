@@ -15,7 +15,8 @@ export default function StepCounterExample() {
         procedureType="knee"
         rehabPhase="post-op"
         onOpenSettings={() => console.log('Open settings')}
-        permissionGranted={true}
+        onSetSteps={() => undefined}
+        onAddSteps={() => undefined}
       />
     </div>
   );
