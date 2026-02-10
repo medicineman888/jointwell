@@ -5,7 +5,18 @@ import QuickTipCard from "@/components/QuickTipCard";
 import ReminderToggleCard from "@/components/ReminderToggleCard";
 import SetupModal from "@/components/SetupModal";
 import SwitchToPostOpBanner from "@/components/SwitchToPostOpBanner";
+import WeightTrackerCard from "@/components/WeightTrackerCard";
+import OptimizationProfileCard from "@/components/OptimizationProfileCard";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { getPersonalizedInterventions, procedureMetadata } from "@/data/clinicalProgram";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { useOptimizationProfile } from "@/hooks/useOptimizationProfile";
+import { useInterventionProgress } from "@/hooks/useInterventionProgress";
+import { useDailyMetrics } from "@/hooks/useDailyMetrics";
+import type { ProcedureType } from "@/types/clinical";
 import { Droplets, ArrowUp, Activity, TrendingUp, Dumbbell, Heart } from "lucide-react";
 
 export default function Home() {
@@ -19,18 +30,14 @@ export default function Home() {
     getRecoveryPhase, 
     isSetupComplete 
   } = useUserSettings();
-  
+  const { profile, updateProfile, tags, completionPercentage } = useOptimizationProfile();
+  const { progress, toggleIntervention, getCompletedCount } = useInterventionProgress();
+  const { todaySteps, setTodaySteps, addSteps, weightSummary, logWeight } = useDailyMetrics();
+
   const [ankleReminder, setAnkleReminder] = useState(true);
   const [elevationReminder, setElevationReminder] = useState(false);
   const [stepReminder, setStepReminder] = useState(true);
-  const [steps, setSteps] = useState(1847);
-  const [permissionGranted, setPermissionGranted] = useState(true);
   const [setupOpen, setSetupOpen] = useState(!isSetupComplete);
-
-  const handleRequestPermission = () => {
-    console.log('Step tracking permission requested');
-    setPermissionGranted(true);
-  };
 
   const handleSaveSettings = (procedureType: "hip" | "knee", surgeryDate: string | null, rehabPhase: "pre-op" | "post-op") => {
     updateSettings({ procedureType, surgeryDate, rehabPhase });
@@ -45,11 +52,22 @@ export default function Home() {
   const stepGoal = getStepGoal();
   const recoveryPhase = getRecoveryPhase();
   const isPreOp = settings.rehabPhase === "pre-op";
+  const selectedProcedure: ProcedureType = settings.procedureType ?? "hip";
+  const interventions = getPersonalizedInterventions({
+    procedure: selectedProcedure,
+    phase: settings.rehabPhase,
+    profileTags: tags,
+  });
+  const topInterventions = interventions.slice(0, 3);
+  const completedInterventions = getCompletedCount(interventions.map((item) => item.id));
+
+  const interventionScore = interventions.length > 0 ? (completedInterventions / interventions.length) * 70 : 0;
+  const stepScore = Math.min(todaySteps / Math.max(stepGoal, 1), 1) * 20;
+  const profileScore = (completionPercentage / 100) * 10;
+  const readinessScore = Math.round(interventionScore + stepScore + profileScore);
 
   const getPreOpTips = () => {
-    const weeksUntil = getWeeksUntilSurgery();
-    
-    if (weeksUntil !== null && weeksUntil <= 1) {
+    if (weeksUntilSurgery !== null && weeksUntilSurgery <= 1) {
       return [
         {
           icon: Heart,
@@ -77,13 +95,13 @@ export default function Home() {
       },
       {
         icon: TrendingUp,
-        title: "Build Cardiovascular Fitness",
-        description: "Regular walking helps prepare your body for surgery and recovery.",
+        title: "Build Activity Tolerance",
+        description: "Aim for consistent daily movement. Small gains now often translate to easier mobilisation after surgery.",
       },
       {
         icon: Heart,
-        title: "Optimise Your Health",
-        description: "Eat well, maintain a healthy weight, and stop smoking if applicable.",
+        title: "Target Modifiable Risks",
+        description: "Focus first on smoking cessation, glycaemic control, and adherence to your pre-op education plan.",
       },
     ];
   };
@@ -140,8 +158,8 @@ export default function Home() {
       },
       {
         icon: Activity,
-        title: "Build Gradually",
-        description: "Increase walking distance slowly. Listen to your body and rest when needed.",
+        title: "Progress Loading Gradually",
+        description: "Increase walking and exercises in small steps to avoid swelling setbacks.",
       },
     ];
   };
@@ -150,16 +168,52 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
-      <WelcomeCard />
+      <WelcomeCard
+        isPreOp={isPreOp}
+        procedureLabel={settings.procedureType ? procedureMetadata[settings.procedureType].title : undefined}
+        weeksUntilSurgery={weeksUntilSurgery}
+        recoveryWeek={recoveryWeek}
+      />
 
       {isPreOp && isSetupComplete && (
         <SwitchToPostOpBanner onSwitch={handleSwitchToPostOp} />
       )}
+
+      <Card className="p-6 border-primary/20">
+        <div className="space-y-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-medium text-foreground">{isPreOp ? "Surgery Readiness Score" : "Recovery Momentum Score"}</h3>
+              <p className="text-sm text-muted-foreground">
+                Built from intervention completion, daily movement progress, and profile setup quality.
+              </p>
+            </div>
+            <Badge className="bg-primary text-primary-foreground text-base px-3 py-1">{readinessScore}%</Badge>
+          </div>
+          <Progress value={readinessScore} className="h-3" />
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-md bg-muted p-2">
+              <p className="text-xs text-muted-foreground">Actions done</p>
+              <p className="text-sm font-medium text-foreground">
+                {completedInterventions}/{interventions.length}
+              </p>
+            </div>
+            <div className="rounded-md bg-muted p-2">
+              <p className="text-xs text-muted-foreground">Step progress</p>
+              <p className="text-sm font-medium text-foreground">{Math.round(Math.min((todaySteps / Math.max(stepGoal, 1)) * 100, 100))}%</p>
+            </div>
+            <div className="rounded-md bg-muted p-2">
+              <p className="text-xs text-muted-foreground">Profile setup</p>
+              <p className="text-sm font-medium text-foreground">{completionPercentage}%</p>
+            </div>
+          </div>
+        </div>
+      </Card>
       
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">Today's Progress</h2>
         <StepCounter 
-          steps={steps} 
+          steps={todaySteps} 
           goal={stepGoal}
           recoveryWeek={recoveryWeek}
           weeksUntilSurgery={weeksUntilSurgery}
@@ -167,9 +221,37 @@ export default function Home() {
           procedureType={settings.procedureType}
           rehabPhase={settings.rehabPhase}
           onOpenSettings={() => setSetupOpen(true)}
-          permissionGranted={permissionGranted}
-          onRequestPermission={handleRequestPermission}
+          onSetSteps={setTodaySteps}
+          onAddSteps={addSteps}
         />
+      </div>
+
+      <WeightTrackerCard summary={weightSummary} onLogWeight={logWeight} />
+
+      <div>
+        <h2 className="text-lg font-medium text-foreground mb-4 px-1">Priority Actions This Week</h2>
+        <div className="space-y-3">
+          {topInterventions.map((intervention) => (
+            <Card key={intervention.id} className="p-4">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  checked={Boolean(progress[intervention.id])}
+                  onCheckedChange={(checked) => toggleIntervention(intervention.id)}
+                  className="mt-1"
+                />
+                <div className="space-y-1 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-medium text-foreground">{intervention.title}</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {intervention.timeframe}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{intervention.summary}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
 
       <div>
@@ -188,6 +270,12 @@ export default function Home() {
         </div>
       </div>
 
+      <OptimizationProfileCard
+        profile={profile}
+        completionPercentage={completionPercentage}
+        onProfileChange={updateProfile}
+      />
+
       <div>
         <h2 className="text-lg font-medium text-foreground mb-4 px-1">Gentle Reminders</h2>
         <div className="space-y-4">
@@ -197,7 +285,6 @@ export default function Home() {
             description={isPreOp ? "Daily reminder to complete your strengthening exercises" : "Reminder every 2 hours to perform ankle pump exercises"}
             enabled={ankleReminder}
             onToggle={(enabled) => {
-              console.log('Exercise/ankle pumps reminder:', enabled);
               setAnkleReminder(enabled);
             }}
           />
@@ -208,7 +295,6 @@ export default function Home() {
               description="Reminder to elevate your leg for 20 minutes, 3 times daily"
               enabled={elevationReminder}
               onToggle={(enabled) => {
-                console.log('Elevation reminder:', enabled);
                 setElevationReminder(enabled);
               }}
             />
@@ -219,7 +305,6 @@ export default function Home() {
             description={isPreOp ? "Evening reminder to reach your prehab step target" : "Evening reminder if you haven't reached your step target"}
             enabled={stepReminder}
             onToggle={(enabled) => {
-              console.log('Step goal reminder:', enabled);
               setStepReminder(enabled);
             }}
           />
