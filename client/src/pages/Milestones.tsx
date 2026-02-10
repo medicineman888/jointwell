@@ -2,7 +2,7 @@ import MilestoneTimeline from "@/components/MilestoneTimeline";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { Car, CalendarClock, Compass, Expand } from "lucide-react";
+import { Car, CalendarClock, Compass, Expand, CheckCircle2 } from "lucide-react";
 
 export default function Milestones() {
   const { settings, getWeeksUntilSurgery, getRecoveryWeek, getStepGoal } = useUserSettings();

@@ -3,40 +3,32 @@ import ProcedureToggle from "@/components/ProcedureToggle";
 import OptimizationProfileCard from "@/components/OptimizationProfileCard";
 import ImpactInterventionCard from "@/components/ImpactInterventionCard";
 import HomeReadyChecklistCard from "@/components/HomeReadyChecklistCard";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { useHomeReadyChecklist } from "@/hooks/useHomeReadyChecklist";
 import { useOptimizationProfile } from "@/hooks/useOptimizationProfile";
 import { useInterventionProgress } from "@/hooks/useInterventionProgress";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { getEvidenceForInterventions, getPersonalizedInterventions, procedureMetadata } from "@/data/clinicalProgram";
 import {
-  getPersonalizedInterventions,
-  getEvidenceForInterventions,
-  procedureMetadata,
-} from "@/data/clinicalProgram";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { 
-  BookOpenCheck,
-  CircleAlert,
-  CheckCircle2,
-  Home,
   Armchair,
+  BookOpenCheck,
+  CheckCircle2,
+  CircleAlert,
   Hand,
+  Home,
+  ListChecks,
   ShowerHead,
   UtensilsCrossed,
-  ListChecks,
 } from "lucide-react";
 
 export default function PreOp() {
   const { settings, updateSettings, getWeeksUntilSurgery } = useUserSettings();
   const { profile, updateProfile, tags, completionPercentage } = useOptimizationProfile();
   const { progress, markIntervention, getCompletedCount } = useInterventionProgress();
-  const { 
-    checklist: homeChecklist, 
-    toggleItem: toggleHomeItem, 
-    completedCount: homeCompletedCount, 
-    totalCount: homeTotalCount 
-  } = useHomeReadyChecklist();
+  const { checklist: homeChecklist, toggleItem: toggleHomeItem, completedCount: homeCompletedCount, totalCount: homeTotalCount } =
+    useHomeReadyChecklist();
 
   const selectedProcedure = settings.procedureType ?? "hip";
   const weeksUntilSurgery = getWeeksUntilSurgery();
@@ -46,17 +38,12 @@ export default function PreOp() {
     phase: "pre-op",
     profileTags: tags,
   });
-  const interventionIds = interventions.map((intervention) => intervention.id);
-  const completedCount = getCompletedCount(interventionIds);
-  const totalCount = interventions.length;
-  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+  const completedCount = getCompletedCount(interventions.map((item) => item.id));
+  const progressPercentage = interventions.length > 0 ? (completedCount / interventions.length) * 100 : 0;
 
   const evidence = getEvidenceForInterventions(interventions);
-  const evidenceMap = useMemo(() => {
-    return Object.fromEntries(evidence.map((item) => [item.id, item]));
-  }, [evidence]);
-
-  const homeProgressPercentage = (homeCompletedCount / homeTotalCount) * 100;
+  const evidenceMap = useMemo(() => Object.fromEntries(evidence.map((item) => [item.id, item])), [evidence]);
+  const homeProgressPercentage = homeTotalCount > 0 ? (homeCompletedCount / homeTotalCount) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -76,9 +63,11 @@ export default function PreOp() {
               Focus risks: {procedureMetadata[selectedProcedure].keyRisks.join(", ")}.
             </p>
           </div>
-          {weeksUntilSurgery !== null && (
-            <Badge variant="secondary">{weeksUntilSurgery} week{weeksUntilSurgery === 1 ? "" : "s"} to surgery</Badge>
-          )}
+          {weeksUntilSurgery !== null ? (
+            <Badge variant="secondary">
+              {weeksUntilSurgery} week{weeksUntilSurgery === 1 ? "" : "s"} to surgery
+            </Badge>
+          ) : null}
         </div>
         <div className="mt-4 space-y-2">
           {procedureMetadata[selectedProcedure].specialFocus.map((tip) => (
@@ -88,7 +77,7 @@ export default function PreOp() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       <OptimizationProfileCard
         profile={profile}
@@ -103,16 +92,16 @@ export default function PreOp() {
             <div>
               <h3 className="text-lg font-medium text-foreground">Optimization Progress</h3>
               <p className="text-sm text-muted-foreground">
-                {completedCount} of {totalCount} actions started
+                {completedCount} of {interventions.length} actions started
               </p>
             </div>
           </div>
-          {completedCount >= 3 && (
+          {completedCount >= 3 ? (
             <Badge className="bg-accent text-accent-foreground">
               <BookOpenCheck className="w-3 h-3 mr-1" />
               Evidence-informed
             </Badge>
-          )}
+          ) : null}
         </div>
         <Progress value={progressPercentage} className="h-3" />
         <p className="text-sm text-muted-foreground mt-3">
@@ -126,9 +115,10 @@ export default function PreOp() {
             key={intervention.id}
             intervention={intervention}
             completed={Boolean(progress[intervention.id])}
-            evidence={intervention.evidenceIds
-              .map((evidenceId) => evidenceMap[evidenceId])
-              .filter((item): item is (typeof evidence)[number] => item !== undefined)}
+            evidence={intervention.evidenceIds.flatMap((evidenceId) => {
+              const citation = evidenceMap[evidenceId];
+              return citation ? [citation] : [];
+            })}
             onToggle={(nextValue) => markIntervention(intervention.id, nextValue)}
           />
         ))}
@@ -147,17 +137,13 @@ export default function PreOp() {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-accent" />
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  {homeCompletedCount} of {homeTotalCount} completed
-                </p>
-              </div>
+              <p className="text-sm font-medium text-foreground">
+                {homeCompletedCount} of {homeTotalCount} completed
+              </p>
             </div>
-            {homeCompletedCount === homeTotalCount && homeCompletedCount > 0 && (
-              <Badge className="bg-accent text-accent-foreground">
-                All done!
-              </Badge>
-            )}
+            {homeCompletedCount === homeTotalCount && homeCompletedCount > 0 ? (
+              <Badge className="bg-accent text-accent-foreground">All done!</Badge>
+            ) : null}
           </div>
           <Progress value={homeProgressPercentage} className="h-2 mt-3" />
         </Card>
@@ -168,43 +154,39 @@ export default function PreOp() {
             title="Clear pathways and remove trip hazards"
             description="Create clear walking routes through your home. Remove or relocate furniture, rugs, and other obstacles that could cause falls."
             checked={homeChecklist.pathsCleared}
-            onToggle={() => toggleHomeItem('pathsCleared')}
+            onToggle={() => toggleHomeItem("pathsCleared")}
             testId="home-paths"
           />
-
           <HomeReadyChecklistCard
             icon={Hand}
             title="Position everyday items at waist height"
             description="Arrange frequently-used items (remote, phone charger, kettle) between knee and shoulder height to avoid bending or reaching during recovery."
             checked={homeChecklist.itemsAtWaistHeight}
-            onToggle={() => toggleHomeItem('itemsAtWaistHeight')}
+            onToggle={() => toggleHomeItem("itemsAtWaistHeight")}
             testId="home-items"
           />
-
           <HomeReadyChecklistCard
             icon={Hand}
             title="Install grab rails and raised toilet seat"
-            description="Install grab rails beside the toilet and in the shower for safety and stability. Consider a raised toilet seat to reduce hip or knee flexion. Your hospital may loan equipment."
+            description="Install grab rails beside the toilet and in the shower for safety and stability. Consider a raised toilet seat to reduce hip or knee flexion."
             checked={homeChecklist.grabRailsToiletSeat}
-            onToggle={() => toggleHomeItem('grabRailsToiletSeat')}
+            onToggle={() => toggleHomeItem("grabRailsToiletSeat")}
             testId="home-rails"
           />
-
           <HomeReadyChecklistCard
             icon={ShowerHead}
             title="Obtain a shower chair or stool"
-            description="A shower chair allows you to bathe safely whilst managing mobility restrictions. Your hospital may be able to provide one."
+            description="A shower chair allows you to bathe safely while managing mobility restrictions."
             checked={homeChecklist.showerChairReady}
-            onToggle={() => toggleHomeItem('showerChairReady')}
+            onToggle={() => toggleHomeItem("showerChairReady")}
             testId="home-shower"
           />
-
           <HomeReadyChecklistCard
             icon={UtensilsCrossed}
             title="Stock supplies and arrange support"
-            description="Stock your freezer with ready meals and ensure adequate supplies of essentials within easy reach. Arrange for someone to provide assistance for the first 2 weeks."
+            description="Stock ready meals and arrange practical support for the first 2 weeks at home."
             checked={homeChecklist.freezerStockedHelpSorted}
-            onToggle={() => toggleHomeItem('freezerStockedHelpSorted')}
+            onToggle={() => toggleHomeItem("freezerStockedHelpSorted")}
             testId="home-freezer"
           />
         </div>

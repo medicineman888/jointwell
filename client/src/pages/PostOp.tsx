@@ -94,9 +94,10 @@ export default function PostOp() {
             key={intervention.id}
             intervention={intervention}
             completed={Boolean(progress[intervention.id])}
-            evidence={intervention.evidenceIds
-              .map((evidenceId) => evidenceMap[evidenceId])
-              .filter((item): item is (typeof evidence)[number] => item !== undefined)}
+            evidence={intervention.evidenceIds.flatMap((evidenceId) => {
+              const citation = evidenceMap[evidenceId];
+              return citation ? [citation] : [];
+            })}
             onToggle={(nextValue) => markIntervention(intervention.id, nextValue)}
           />
         ))}
